@@ -1,7 +1,7 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
+  "modid": "ChatMirumiru",
+  "name": "ChatMirumiru",
   "description": "Example placeholder mod.",
   "version": "${version}",
   "mcversion": "${mcversion}",
