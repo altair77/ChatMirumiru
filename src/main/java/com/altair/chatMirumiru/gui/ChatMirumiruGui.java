@@ -1,7 +1,5 @@
 package com.altair.chatMirumiru.gui;
 
-import java.awt.EventQueue;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -12,7 +10,6 @@ import javax.swing.JScrollPane;
 
 public class ChatMirumiruGui {
 
-	private ChatMirumiruGui window;
 	private JFrame frame;
 	private JList list;
 	private DefaultListModel model;
@@ -22,19 +19,6 @@ public class ChatMirumiruGui {
 	 */
 	public ChatMirumiruGui() {
 		initialize();
-	}
-
-	public void run() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ChatMirumiruGui window = new ChatMirumiruGui();
-					window.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	/**
