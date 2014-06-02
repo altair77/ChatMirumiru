@@ -1,22 +1,34 @@
 package com.altair.chatMirumiru;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import cpw.mods.fml.common.Mod;
+
+import com.altair.chatMirumiru.gui.ChatMirumiruGui;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "ChatMirumiru", version = "0.0.1")
 public class ChatMirumiruEvent {
+
+	private ChatMirumiruGui window;
+
+	public ChatMirumiruEvent(ChatMirumiruGui window) {
+		this.window = window;
+	}
 
 	/*
 	 * クライアントチャット更新時イベント
 	 */
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onChat(ClientChatReceivedEvent event) {
-		MinecraftServer.getServer().logInfo("[Chat] " + event.message.getFormattedText());
+	public void chat(ClientChatReceivedEvent event) {
+
+		ChatMirumiruCore.log.info("[ChatMirumiru] " + event.message.getFormattedText());
+		ChatMirumiruCore.log.info("[ChatMirumiru] " + event.message.getUnformattedText());
+		ChatMirumiruCore.log.info("[ChatMirumiru] " + event.message.getUnformattedTextForChat());
+
+		window.addList(event.message.getUnformattedText());
+
 	}
 
 }
