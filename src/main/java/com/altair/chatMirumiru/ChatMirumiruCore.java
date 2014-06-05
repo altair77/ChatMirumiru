@@ -17,7 +17,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "ChatMirumiru", version = "0.0.2")
+@Mod(modid = "ChatMirumiru", version = "0.0.3")
 public class ChatMirumiruCore {
 
 	public static final Logger log = LogManager.getLogger("ChatMirumiru");
