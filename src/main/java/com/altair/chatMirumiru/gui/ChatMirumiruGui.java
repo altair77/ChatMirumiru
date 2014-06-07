@@ -3,6 +3,9 @@ package com.altair.chatMirumiru.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,10 +29,16 @@ import com.altair.chatMirumiru.ChatMirumiruCore;
 
 public class ChatMirumiruGui implements ActionListener {
 
+	private ArrayList<String> allChatLog = new ArrayList<String>();
+	private final String userMatchStr = "^((\\[.+\\]|\\x20SUV\\-\\*\\x20)(.+\\x20)*|\\[.+\\]+<.+>).+:\\x20";
+	private final String systemMatchStr = "";
+
 	private JFrame frame;
 	private JTextPane textPane;
 	private JTextField textField;
 	private JCheckBox autoScrollCheckBox;
+	private JCheckBox userCheckBox;
+	private JCheckBox systemCheckBox;
 
 	/**
 	 * Create the application.
@@ -63,12 +72,16 @@ public class ChatMirumiruGui implements ActionListener {
 		autoScrollCheckBox.setBounds(347, 6, 125, 21);
 		frame.getContentPane().add(autoScrollCheckBox);
 
-		JCheckBox userCheckBox = new JCheckBox("ユーザー");
+		userCheckBox = new JCheckBox("ユーザー");
+		userCheckBox.addActionListener(this);
+		userCheckBox.setActionCommand("userCheck");
 		userCheckBox.setSelected(true);
 		userCheckBox.setBounds(12, 6, 92, 21);
 		frame.getContentPane().add(userCheckBox);
 
-		JCheckBox systemCheckBox = new JCheckBox("システム");
+		systemCheckBox = new JCheckBox("システム");
+		systemCheckBox.addActionListener(this);
+		systemCheckBox.setActionCommand("systemCheck");
 		systemCheckBox.setSelected(true);
 		systemCheckBox.setBounds(108, 6, 92, 21);
 		frame.getContentPane().add(systemCheckBox);
@@ -108,10 +121,14 @@ public class ChatMirumiruGui implements ActionListener {
 	}
 
 	public void addList(String text) {
+		allChatLog.add(text);
 		Document doc = textPane.getDocument();
 		SimpleAttributeSet attr = new SimpleAttributeSet();
 		try {
-			doc.insertString(doc.getLength(), text+"\n", attr);
+			if(userCheckBox.isSelected() && isUserMessage(text))
+				doc.insertString(doc.getLength(), text+"\n", attr);
+			else if(systemCheckBox.isSelected() && isSystemMessage(text))
+				doc.insertString(doc.getLength(), text+"\n", attr);
 		} catch (BadLocationException e) {
 			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
 		}
@@ -127,6 +144,38 @@ public class ChatMirumiruGui implements ActionListener {
 		if(e.getActionCommand().equals("exit")){
 			setVisible(false);
 		}
+		if(e.getActionCommand().equals("userCheck") || e.getActionCommand().equals("systemCheck")){
+			ChatMirumiruCore.log.info("[ChatMirumiru/info] reView");
+			reView();
+		}
+	}
+
+	private void reView() {
+		StyleContext sc = new StyleContext();
+		DefaultStyledDocument doc = new DefaultStyledDocument(sc);
+		textPane.setDocument(doc);
+		try{
+			for(String message : allChatLog) {
+				if(userCheckBox.isSelected() && isUserMessage(message))
+					doc.insertString(doc.getLength(), message+"\n", new SimpleAttributeSet());
+				else if(systemCheckBox.isSelected() && isSystemMessage(message))
+					doc.insertString(doc.getLength(), message+"\n", new SimpleAttributeSet());
+			}
+		}catch(BadLocationException e){
+			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
+		}
+
+	}
+
+	private boolean isUserMessage(String text) {
+		Pattern p = Pattern.compile(userMatchStr);
+		Matcher m = p.matcher(text);
+		return m.find();
+
+	}
+
+	private boolean isSystemMessage(String text) {
+		return !isUserMessage(text);
 	}
 
 }
