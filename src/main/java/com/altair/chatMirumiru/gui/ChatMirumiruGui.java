@@ -1,18 +1,27 @@
 package com.altair.chatMirumiru.gui;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -30,8 +39,10 @@ import com.altair.chatMirumiru.ChatMirumiruCore;
 public class ChatMirumiruGui implements ActionListener {
 
 	private ArrayList<String> allChatLog = new ArrayList<String>();
-	private final String userMatchStr = "^((\\[.+\\]|\\x20SUV\\-\\*\\x20)(.+\\x20)*|\\[.+\\]+<.+>).+:\\x20";
+	private ArrayList<String> allChatDate = new ArrayList<String>();
+	private final String userMatchStr = "^(\\[.+\\])+(<.+>)+.+:\\x20";
 	private final String systemMatchStr = "";
+	private Calendar cal;
 
 	private JFrame frame;
 	private JTextPane textPane;
@@ -39,11 +50,17 @@ public class ChatMirumiruGui implements ActionListener {
 	private JCheckBox autoScrollCheckBox;
 	private JCheckBox userCheckBox;
 	private JCheckBox systemCheckBox;
+	private JCheckBox dateCheckBox;
 
 	/**
 	 * Create the application.
 	 */
 	public ChatMirumiruGui() {
+		cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPANESE);
+		//cal = Calendar.getInstance();
+		//cal.setTimeInMillis(Minecraft.getSystemTime());
+		cal.setTime(new Date());
+
 		initialize();
 	}
 
@@ -54,50 +71,65 @@ public class ChatMirumiruGui implements ActionListener {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 500, 334);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 33, 460, 201);
-		frame.getContentPane().add(scrollPane);
-
-		textPane = new JTextPane();
 		StyleContext sc = new StyleContext();
 		DefaultStyledDocument doc = new DefaultStyledDocument(sc);
-		textPane.setDocument(doc);
-		scrollPane.setViewportView(textPane);
+		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+
+		JPanel panel = new JPanel();
+		frame.getContentPane().add(panel);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+
+				userCheckBox = new JCheckBox("ユーザー");
+				panel.add(userCheckBox);
+				userCheckBox.addActionListener(this);
+				userCheckBox.setActionCommand("userCheck");
+				userCheckBox.setSelected(true);
+
+						systemCheckBox = new JCheckBox("システム");
+						panel.add(systemCheckBox);
+						systemCheckBox.addActionListener(this);
+						systemCheckBox.setActionCommand("systemCheck");
+						systemCheckBox.setSelected(true);
+
+								dateCheckBox = new JCheckBox("日時");
+								panel.add(dateCheckBox);
+								dateCheckBox.addActionListener(this);
+								dateCheckBox.setActionCommand("dateCheck");
+
+								Component horizontalGlue = Box.createHorizontalGlue();
+								panel.add(horizontalGlue);
 
 
-		autoScrollCheckBox = new JCheckBox("自動スクロール");
-		autoScrollCheckBox.setSelected(true);
-		autoScrollCheckBox.setBounds(347, 6, 125, 21);
-		frame.getContentPane().add(autoScrollCheckBox);
+								autoScrollCheckBox = new JCheckBox("自動スクロール");
+								panel.add(autoScrollCheckBox);
+								autoScrollCheckBox.setSelected(true);
 
-		userCheckBox = new JCheckBox("ユーザー");
-		userCheckBox.addActionListener(this);
-		userCheckBox.setActionCommand("userCheck");
-		userCheckBox.setSelected(true);
-		userCheckBox.setBounds(12, 6, 92, 21);
-		frame.getContentPane().add(userCheckBox);
+		JPanel panel_1 = new JPanel();
+		frame.getContentPane().add(panel_1);
+		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.LINE_AXIS));
 
-		systemCheckBox = new JCheckBox("システム");
-		systemCheckBox.addActionListener(this);
-		systemCheckBox.setActionCommand("systemCheck");
-		systemCheckBox.setSelected(true);
-		systemCheckBox.setBounds(108, 6, 92, 21);
-		frame.getContentPane().add(systemCheckBox);
+				JScrollPane scrollPane = new JScrollPane();
+				panel_1.add(scrollPane);
 
-		textField = new JTextField();
-		textField.addActionListener(this);
-		textField.setActionCommand("chat");
-		textField.setBounds(12, 244, 383, 19);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+						textPane = new JTextPane();
+						textPane.setDocument(doc);
+						scrollPane.setViewportView(textPane);
 
-		JButton button = new JButton("送信");
-		button.addActionListener(this);
-		button.setActionCommand("send");
-		button.setBounds(407, 243, 65, 21);
-		frame.getContentPane().add(button);
+		JPanel panel_2 = new JPanel();
+		frame.getContentPane().add(panel_2);
+		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.LINE_AXIS));
+
+				textField = new JTextField();
+				panel_2.add(textField);
+				textField.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
+				textField.addActionListener(this);
+				textField.setActionCommand("chat");
+				textField.setColumns(10);
+
+						JButton button = new JButton("送信");
+						panel_2.add(button);
+						button.addActionListener(this);
+						button.setActionCommand("send");
 
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -122,6 +154,7 @@ public class ChatMirumiruGui implements ActionListener {
 
 	public void addList(String text) {
 		allChatLog.add(text);
+		allChatDate.add(getDateText());
 		Document doc = textPane.getDocument();
 		SimpleAttributeSet attr = new SimpleAttributeSet();
 		try {
@@ -144,7 +177,7 @@ public class ChatMirumiruGui implements ActionListener {
 		if(e.getActionCommand().equals("exit")){
 			setVisible(false);
 		}
-		if(e.getActionCommand().equals("userCheck") || e.getActionCommand().equals("systemCheck")){
+		if(e.getActionCommand().equals("userCheck") || e.getActionCommand().equals("systemCheck") || e.getActionCommand().equals("dateCheck")){
 			ChatMirumiruCore.log.info("[ChatMirumiru/info] reView");
 			reView();
 		}
@@ -155,11 +188,16 @@ public class ChatMirumiruGui implements ActionListener {
 		DefaultStyledDocument doc = new DefaultStyledDocument(sc);
 		textPane.setDocument(doc);
 		try{
+			int cnt = 0;
 			for(String message : allChatLog) {
+				String date = "";
+				if(dateCheckBox.isSelected())
+					date = allChatDate.get(cnt) + "  ";
 				if(userCheckBox.isSelected() && isUserMessage(message))
-					doc.insertString(doc.getLength(), message+"\n", new SimpleAttributeSet());
+					doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
 				else if(systemCheckBox.isSelected() && isSystemMessage(message))
-					doc.insertString(doc.getLength(), message+"\n", new SimpleAttributeSet());
+					doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
+				cnt++;
 			}
 		}catch(BadLocationException e){
 			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
@@ -176,6 +214,10 @@ public class ChatMirumiruGui implements ActionListener {
 
 	private boolean isSystemMessage(String text) {
 		return !isUserMessage(text);
+	}
+
+	public String getDateText() {
+		return cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.DATE)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
 	}
 
 }
