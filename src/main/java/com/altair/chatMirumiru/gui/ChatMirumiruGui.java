@@ -39,10 +39,9 @@ import com.altair.chatMirumiru.ChatMirumiruCore;
 public class ChatMirumiruGui implements ActionListener {
 
 	private ArrayList<String> allChatLog = new ArrayList<String>();
-	private ArrayList<String> allChatDate = new ArrayList<String>();
+	private ArrayList<Long> allChatTime = new ArrayList<Long>();
 	private final String userMatchStr = "^(\\[.+\\])+(<.+>)+.+:\\x20";
 	private final String systemMatchStr = "";
-	private Calendar cal;
 
 	private JFrame frame;
 	private JTextPane textPane;
@@ -56,11 +55,6 @@ public class ChatMirumiruGui implements ActionListener {
 	 * Create the application.
 	 */
 	public ChatMirumiruGui() {
-		cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPANESE);
-		//cal = Calendar.getInstance();
-		//cal.setTimeInMillis(Minecraft.getSystemTime());
-		cal.setTime(new Date());
-
 		initialize();
 	}
 
@@ -154,14 +148,17 @@ public class ChatMirumiruGui implements ActionListener {
 
 	public void addList(String text) {
 		allChatLog.add(text);
-		allChatDate.add(getDateText());
+		allChatTime.add(new Date().getTime());
 		Document doc = textPane.getDocument();
 		SimpleAttributeSet attr = new SimpleAttributeSet();
 		try {
+			String date = "";
+			if(dateCheckBox.isSelected())
+				date = getDateText() + "  ";
 			if(userCheckBox.isSelected() && isUserMessage(text))
-				doc.insertString(doc.getLength(), text+"\n", attr);
+				doc.insertString(doc.getLength(), date+text+"\n", attr);
 			else if(systemCheckBox.isSelected() && isSystemMessage(text))
-				doc.insertString(doc.getLength(), text+"\n", attr);
+				doc.insertString(doc.getLength(), date+text+"\n", attr);
 		} catch (BadLocationException e) {
 			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
 		}
@@ -192,7 +189,7 @@ public class ChatMirumiruGui implements ActionListener {
 			for(String message : allChatLog) {
 				String date = "";
 				if(dateCheckBox.isSelected())
-					date = allChatDate.get(cnt) + "  ";
+					date = getDateText(allChatTime.get(cnt)) + "  ";
 				if(userCheckBox.isSelected() && isUserMessage(message))
 					doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
 				else if(systemCheckBox.isSelected() && isSystemMessage(message))
@@ -217,6 +214,14 @@ public class ChatMirumiruGui implements ActionListener {
 	}
 
 	public String getDateText() {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPANESE);
+		cal.setTime(new Date());
+		return cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.DATE)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+	}
+
+	public String getDateText(long time) {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPANESE);
+		cal.setTimeInMillis(time);
 		return cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.DATE)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
 	}
 
