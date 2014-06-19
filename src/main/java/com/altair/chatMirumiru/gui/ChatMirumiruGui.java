@@ -1,5 +1,6 @@
 package com.altair.chatMirumiru.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
 import net.minecraft.client.Minecraft;
@@ -128,7 +130,7 @@ public class ChatMirumiruGui implements ActionListener {
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 
-		JMenu menu = new JMenu("ファイル");
+		JMenu menu = new JMenu("メニュー");
 		menuBar.add(menu);
 
 		JMenuItem saveMenuItem = new JMenuItem("保存");
@@ -154,11 +156,13 @@ public class ChatMirumiruGui implements ActionListener {
 		try {
 			String date = "";
 			if(dateCheckBox.isSelected())
-				date = getDateText() + "  ";
+				date = "§9" + getDateText() + "§r  ";
 			if(userCheckBox.isSelected() && isUserMessage(text))
-				doc.insertString(doc.getLength(), date+text+"\n", attr);
+				//doc.insertString(doc.getLength(), date+text+"\n", attr);
+				insertFormatedString(doc, date+text+"\n");
 			else if(systemCheckBox.isSelected() && isSystemMessage(text))
-				doc.insertString(doc.getLength(), date+text+"\n", attr);
+				//doc.insertString(doc.getLength(), date+text+"\n", attr);
+				insertFormatedString(doc, date+text+"\n");
 		} catch (BadLocationException e) {
 			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
 		}
@@ -189,11 +193,13 @@ public class ChatMirumiruGui implements ActionListener {
 			for(String message : allChatLog) {
 				String date = "";
 				if(dateCheckBox.isSelected())
-					date = getDateText(allChatTime.get(cnt)) + "  ";
+					date = "§9" + getDateText(allChatTime.get(cnt)) + "§r  ";
 				if(userCheckBox.isSelected() && isUserMessage(message))
-					doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
+					//doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
+					insertFormatedString(doc, date+message+"\n");
 				else if(systemCheckBox.isSelected() && isSystemMessage(message))
-					doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
+					//doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
+					insertFormatedString(doc, date+message+"\n");
 				cnt++;
 			}
 		}catch(BadLocationException e){
@@ -225,4 +231,80 @@ public class ChatMirumiruGui implements ActionListener {
 		return cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.DATE)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
 	}
 
+	public void insertFormatedString(Document doc, String text) throws BadLocationException {
+		SimpleAttributeSet attr = new SimpleAttributeSet();
+		//Pattern p = Pattern.compile("(§0|§1|§2|§3|§4|§5|§6|§7|§8|§9|§a|§b|§c|§d|§e|§f|§l|§m|§n|§o)+(.+?)§r");
+		int start = -1;
+		String rest = text;
+		while((start = rest.indexOf("§")) >= 0){
+			doc.insertString(doc.getLength(), rest.substring(0, start), attr);
+			switch(rest.charAt(start+1)){
+			case '0':  // BLACK
+				StyleConstants.setForeground(attr, Color.BLACK);
+				break;
+			case '1':  // DARK_BLUE
+				StyleConstants.setForeground(attr, Color.getHSBColor(240, 0, 139));
+				break;
+			case '2':  // DARK_GREEN
+				StyleConstants.setForeground(attr, Color.getHSBColor(120, 100, 120));
+				break;
+			case '3':  // DARK_AQUA
+				StyleConstants.setForeground(attr, Color.getHSBColor(180, 100, 55));
+				break;
+			case '4':  // DARK_RED
+				StyleConstants.setForeground(attr, Color.getHSBColor(0, 100, 55));
+				break;
+			case '5':  // DARK_PURPLE
+				StyleConstants.setForeground(attr, Color.getHSBColor(282, 100, 83));
+				break;
+			case '6':  // GOLD
+				StyleConstants.setForeground(attr, Color.getHSBColor(51, 100, 100));
+				break;
+			case '7':  // GRAY
+				StyleConstants.setForeground(attr, Color.GRAY);
+				break;
+			case '8':  // DARK_GRAY
+				StyleConstants.setForeground(attr, Color.DARK_GRAY);
+				break;
+			case '9':  // BLUE
+				StyleConstants.setForeground(attr, Color.BLUE);
+				break;
+			case 'a':  // GREEN
+				StyleConstants.setForeground(attr, Color.GREEN);
+				break;
+			case 'b':  // AQUA
+				StyleConstants.setForeground(attr, Color.getHSBColor(180, 100, 100));
+				break;
+			case 'c':  // RED
+				StyleConstants.setForeground(attr, Color.RED);
+				break;
+			case 'd':  // LIGHT_PURPLE
+				StyleConstants.setForeground(attr, Color.getHSBColor(300, 45, 93));
+				break;
+			case 'e':  // YELLOW
+				StyleConstants.setForeground(attr, Color.YELLOW);
+				break;
+			case 'f':  // WHITE
+				StyleConstants.setForeground(attr, Color.WHITE);
+				break;
+			case 'l':  // BOLD
+				StyleConstants.setBold(attr, true);
+				break;
+			case 'm':  // STRIKETHROUGH
+				StyleConstants.setStrikeThrough(attr, true);
+				break;
+			case 'n':  // UNDERLINE
+				StyleConstants.setUnderline(attr, true);
+				break;
+			case 'o':  // ITALIC
+				StyleConstants.setItalic(attr, true);
+				break;
+			case 'r':  // RESET
+				attr = new SimpleAttributeSet();
+				break;
+			}
+			rest = rest.substring(start+2);
+		}
+		doc.insertString(doc.getLength(), rest, attr);
+	}
 }

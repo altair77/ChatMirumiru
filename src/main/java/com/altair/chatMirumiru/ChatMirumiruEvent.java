@@ -24,10 +24,8 @@ public class ChatMirumiruEvent {
 	public void chat(ClientChatReceivedEvent event) {
 
 		ChatMirumiruCore.log.info("[ChatMirumiru] " + event.message.getFormattedText());
-		ChatMirumiruCore.log.info("[ChatMirumiru] " + event.message.getUnformattedText());
-		ChatMirumiruCore.log.info("[ChatMirumiru] " + event.message.getUnformattedTextForChat());
 
-		window.addList(event.message.getUnformattedText());
+		window.addList(event.message.getFormattedText());
 
 	}
 
