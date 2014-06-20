@@ -108,6 +108,7 @@ public class ChatMirumiruGui implements ActionListener {
 				panel_1.add(scrollPane);
 
 						textPane = new JTextPane();
+						textPane.setBackground(Color.LIGHT_GRAY);
 						textPane.setDocument(doc);
 						scrollPane.setViewportView(textPane);
 
@@ -146,6 +147,13 @@ public class ChatMirumiruGui implements ActionListener {
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
 		textField.requestFocus();
+		Document doc = textPane.getDocument();
+		try {
+			insertFormatedString(doc, "§00§r§11§r§22§r§33§r§44§r§55§r§66§r§77§r§88§r§99§r§aa§r§bb§r§cc§r§dd§r§ee§r§ff§r§ll§r§mm§r§nn§r§oo§r\n");
+		} catch (BadLocationException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
 	}
 
 	public void addList(String text) {
@@ -241,24 +249,23 @@ public class ChatMirumiruGui implements ActionListener {
 			switch(rest.charAt(start+1)){
 			case '0':  // BLACK
 				StyleConstants.setForeground(attr, Color.BLACK);
-				break;
 			case '1':  // DARK_BLUE
-				StyleConstants.setForeground(attr, Color.getHSBColor(240, 0, 139));
+				StyleConstants.setForeground(attr, new Color(0, 0, 139));
 				break;
 			case '2':  // DARK_GREEN
-				StyleConstants.setForeground(attr, Color.getHSBColor(120, 100, 120));
+				StyleConstants.setForeground(attr, new Color(0, 100, 0));
 				break;
 			case '3':  // DARK_AQUA
-				StyleConstants.setForeground(attr, Color.getHSBColor(180, 100, 55));
+				StyleConstants.setForeground(attr, new Color(0, 139, 139));
 				break;
 			case '4':  // DARK_RED
-				StyleConstants.setForeground(attr, Color.getHSBColor(0, 100, 55));
+				StyleConstants.setForeground(attr, new Color(139, 0, 0));
 				break;
 			case '5':  // DARK_PURPLE
-				StyleConstants.setForeground(attr, Color.getHSBColor(282, 100, 83));
+				StyleConstants.setForeground(attr, new Color(148, 0, 211));
 				break;
 			case '6':  // GOLD
-				StyleConstants.setForeground(attr, Color.getHSBColor(51, 100, 100));
+				StyleConstants.setForeground(attr, new Color(255, 215, 0));
 				break;
 			case '7':  // GRAY
 				StyleConstants.setForeground(attr, Color.GRAY);
@@ -273,13 +280,13 @@ public class ChatMirumiruGui implements ActionListener {
 				StyleConstants.setForeground(attr, Color.GREEN);
 				break;
 			case 'b':  // AQUA
-				StyleConstants.setForeground(attr, Color.getHSBColor(180, 100, 100));
+				StyleConstants.setForeground(attr, new Color(0, 255, 255));
 				break;
 			case 'c':  // RED
 				StyleConstants.setForeground(attr, Color.RED);
 				break;
 			case 'd':  // LIGHT_PURPLE
-				StyleConstants.setForeground(attr, Color.getHSBColor(300, 45, 93));
+				StyleConstants.setForeground(attr, new Color(238, 130, 238));
 				break;
 			case 'e':  // YELLOW
 				StyleConstants.setForeground(attr, Color.YELLOW);
