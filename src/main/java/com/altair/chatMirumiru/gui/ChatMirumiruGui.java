@@ -147,13 +147,6 @@ public class ChatMirumiruGui implements ActionListener {
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
 		textField.requestFocus();
-		Document doc = textPane.getDocument();
-		try {
-			insertFormatedString(doc, "§00§r§11§r§22§r§33§r§44§r§55§r§66§r§77§r§88§r§99§r§aa§r§bb§r§cc§r§dd§r§ee§r§ff§r§ll§r§mm§r§nn§r§oo§r\n");
-		} catch (BadLocationException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		}
 	}
 
 	public void addList(String text) {
