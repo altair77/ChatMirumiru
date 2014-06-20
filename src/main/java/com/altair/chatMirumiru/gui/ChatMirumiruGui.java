@@ -210,6 +210,7 @@ public class ChatMirumiruGui implements ActionListener {
 	}
 
 	private boolean isUserMessage(String text) {
+		text.replaceAll("§.", "");
 		Pattern p = Pattern.compile(userMatchStr);
 		Matcher m = p.matcher(text);
 		return m.find();
