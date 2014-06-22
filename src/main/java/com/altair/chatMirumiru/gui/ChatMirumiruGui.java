@@ -55,6 +55,10 @@ public class ChatMirumiruGui implements ActionListener {
 	private JCheckBox userCheckBox;
 	private JCheckBox systemCheckBox;
 	private JCheckBox dateCheckBox;
+	private JToggleButton tglbtnUser;
+	private JToggleButton tglbtnSystem;
+	private JToggleButton tglbtnDate;
+	private JToggleButton tglbtnAutoScroll;
 	private JTextField searchField;
 	private JToggleButton tglbtnHighlight;
 	private JToggleButton tglbtnPickup;
@@ -81,55 +85,64 @@ public class ChatMirumiruGui implements ActionListener {
 		frame.getContentPane().add(panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
-				userCheckBox = new JCheckBox("ユーザー");
-				panel.add(userCheckBox);
-				userCheckBox.addActionListener(this);
-				userCheckBox.setActionCommand("userCheck");
-				userCheckBox.setSelected(true);
+				tglbtnUser = new JToggleButton("ユーザー");
+				tglbtnUser.setSelected(true);
+				tglbtnUser.setMaximumSize(new Dimension(41, 20));
+				tglbtnUser.setMargin(new Insets(2, 2, 2, 2));
+				tglbtnUser.addActionListener(this);
+				tglbtnUser.setActionCommand("userCheck");
+				panel.add(tglbtnUser);
 
-						systemCheckBox = new JCheckBox("システム");
-						panel.add(systemCheckBox);
-						systemCheckBox.addActionListener(this);
-						systemCheckBox.setActionCommand("systemCheck");
-						systemCheckBox.setSelected(true);
+				tglbtnSystem = new JToggleButton("システム");
+				tglbtnSystem.setSelected(true);
+				tglbtnSystem.setMaximumSize(new Dimension(41, 20));
+				tglbtnSystem.setMargin(new Insets(2, 2, 2, 2));
+				tglbtnSystem.addActionListener(this);
+				tglbtnSystem.setActionCommand("systemCheck");
+				panel.add(tglbtnSystem);
 
-								dateCheckBox = new JCheckBox("日時");
-								panel.add(dateCheckBox);
-								dateCheckBox.addActionListener(this);
-								dateCheckBox.setActionCommand("dateCheck");
+				tglbtnDate = new JToggleButton("日時");
+				tglbtnDate.setMaximumSize(new Dimension(41, 20));
+				tglbtnDate.setMargin(new Insets(2, 2, 2, 2));
+				tglbtnDate.addActionListener(this);
+				tglbtnDate.setActionCommand("dateCheck");
+				panel.add(tglbtnDate);
 
-								Component horizontalStrut = Box.createHorizontalStrut(20);
-								horizontalStrut.setMaximumSize(new Dimension(10, 1));
-								panel.add(horizontalStrut);
+				Component horizontalStrut = Box.createHorizontalStrut(20);
+				horizontalStrut.setMaximumSize(new Dimension(10, 1));
+				panel.add(horizontalStrut);
 
-								searchField = new JTextField();
-								searchField.addActionListener(this);
-								searchField.setActionCommand("search");
-								searchField.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
-								panel.add(searchField);
-								searchField.setColumns(10);
+				searchField = new JTextField();
+				searchField.addActionListener(this);
+				searchField.setActionCommand("search");
+				searchField.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
+				panel.add(searchField);
+				searchField.setColumns(10);
 
-								tglbtnHighlight = new JToggleButton("強");
-								tglbtnHighlight.addActionListener(this);
-								tglbtnHighlight.setActionCommand("highlight");
-								tglbtnHighlight.setMargin(new Insets(2, 2, 2, 2));
-								tglbtnHighlight.setMaximumSize(new Dimension(41, 20));
-								panel.add(tglbtnHighlight);
+				tglbtnHighlight = new JToggleButton("強");
+				tglbtnHighlight.setSelected(true);
+				tglbtnHighlight.addActionListener(this);
+				tglbtnHighlight.setActionCommand("highlight");
+				tglbtnHighlight.setMargin(new Insets(2, 2, 2, 2));
+				tglbtnHighlight.setMaximumSize(new Dimension(41, 20));
+				panel.add(tglbtnHighlight);
 
-								tglbtnPickup = new JToggleButton("限");
-								tglbtnPickup.addActionListener(this);
-								tglbtnPickup.setActionCommand("pickup");
-								tglbtnPickup.setMargin(new Insets(2, 2, 2, 2));
-								tglbtnPickup.setMaximumSize(new Dimension(41, 20));
-								panel.add(tglbtnPickup);
+				tglbtnPickup = new JToggleButton("限");
+				tglbtnPickup.addActionListener(this);
+				tglbtnPickup.setActionCommand("pickup");
+				tglbtnPickup.setMargin(new Insets(2, 2, 2, 2));
+				tglbtnPickup.setMaximumSize(new Dimension(41, 20));
+				panel.add(tglbtnPickup);
 
-								Component horizontalStrut_1 = Box.createHorizontalStrut(20);
-								horizontalStrut_1.setMaximumSize(new Dimension(10, 1));
-								panel.add(horizontalStrut_1);
+				Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+				horizontalStrut_1.setMaximumSize(new Dimension(10, 1));
+				panel.add(horizontalStrut_1);
 
-								autoScrollCheckBox = new JCheckBox("自動スクロール");
-								panel.add(autoScrollCheckBox);
-								autoScrollCheckBox.setSelected(true);
+				tglbtnAutoScroll = new JToggleButton("自動");
+				tglbtnAutoScroll.setSelected(true);
+				tglbtnAutoScroll.setMaximumSize(new Dimension(41, 20));
+				tglbtnAutoScroll.setMargin(new Insets(2, 2, 2, 2));
+				panel.add(tglbtnAutoScroll);
 
 		JPanel panel_1 = new JPanel();
 		frame.getContentPane().add(panel_1);
@@ -193,17 +206,23 @@ public class ChatMirumiruGui implements ActionListener {
 		Document doc = textPane.getDocument();
 		SimpleAttributeSet attr = new SimpleAttributeSet();
 		try {
+			if(searchField.getText().length() > 0){
+				if(tglbtnPickup.isSelected() && !hitChatLog(text, searchField.getText()))
+					return;
+				if(tglbtnHighlight.isSelected())
+					text = markMessage(text, searchField.getText());
+			}
 			String date = "";
-			if(dateCheckBox.isSelected())
+			if(tglbtnDate.isSelected())
 				date = "§9" + getDateText() + "§r  ";
-			if(userCheckBox.isSelected() && isUserMessage(text))
+			if(tglbtnUser.isSelected() && isUserMessage(text))
 				insertFormatedString(doc, date+text+"\n");
-			else if(systemCheckBox.isSelected() && isSystemMessage(text))
+			else if(tglbtnSystem.isSelected() && isSystemMessage(text))
 				insertFormatedString(doc, date+text+"\n");
 		} catch (BadLocationException e) {
 			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
 		}
-		if(autoScrollCheckBox.isSelected())
+		if(tglbtnAutoScroll.isSelected())
 			textPane.setCaretPosition(doc.getLength());
 	}
 
@@ -230,22 +249,22 @@ public class ChatMirumiruGui implements ActionListener {
 		DefaultStyledDocument doc = new DefaultStyledDocument(sc);
 		textPane.setDocument(doc);
 		try{
-			int cnt = 0;
+			int cnt = -1;
 			for(String message : allChatLog) {
+				cnt++;
 				if(searchField.getText().length() > 0){
-					if(tglbtnHighlight.isSelected())
-						message = markMessage(message, searchField.getText());
 					if(tglbtnPickup.isSelected() && !hitChatLog(cnt, searchField.getText()))
 						continue;
+					if(tglbtnHighlight.isSelected())
+						message = markMessage(message, searchField.getText());
 				}
 				String date = "";
-				if(dateCheckBox.isSelected())
+				if(tglbtnDate.isSelected())
 					date = "§9" + getDateText(allChatTime.get(cnt)) + "§r  ";
-				if(userCheckBox.isSelected() && isUserMessage(message))
+				if(tglbtnUser.isSelected() && isUserMessage(message))
 					insertFormatedString(doc, date+message+"\n");
-				else if(systemCheckBox.isSelected() && isSystemMessage(message))
+				else if(tglbtnSystem.isSelected() && isSystemMessage(message))
 					insertFormatedString(doc, date+message+"\n");
-				cnt++;
 			}
 		}catch(BadLocationException e){
 			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
@@ -364,7 +383,12 @@ public class ChatMirumiruGui implements ActionListener {
 	}
 
 	public boolean hitChatLog(int index, String word) {
-		if(allChatLog.get(index).indexOf(word) >= 0)
+		return hitChatLog(allChatLog.get(index), word);
+	}
+
+	public boolean hitChatLog(String target, String word) {
+		target = target.replaceAll("§.", "");
+		if(target.indexOf(word) >= 0)
 			return true;
 		return false;
 	}
