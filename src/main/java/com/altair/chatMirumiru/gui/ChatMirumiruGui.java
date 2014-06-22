@@ -3,8 +3,10 @@ package com.altair.chatMirumiru.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -52,6 +55,9 @@ public class ChatMirumiruGui implements ActionListener {
 	private JCheckBox userCheckBox;
 	private JCheckBox systemCheckBox;
 	private JCheckBox dateCheckBox;
+	private JTextField searchField;
+	private JToggleButton tglbtnHighlight;
+	private JToggleButton tglbtnPickup;
 
 	/**
 	 * Create the application.
@@ -92,9 +98,34 @@ public class ChatMirumiruGui implements ActionListener {
 								dateCheckBox.addActionListener(this);
 								dateCheckBox.setActionCommand("dateCheck");
 
-								Component horizontalGlue = Box.createHorizontalGlue();
-								panel.add(horizontalGlue);
+								Component horizontalStrut = Box.createHorizontalStrut(20);
+								horizontalStrut.setMaximumSize(new Dimension(10, 1));
+								panel.add(horizontalStrut);
 
+								searchField = new JTextField();
+								searchField.addActionListener(this);
+								searchField.setActionCommand("search");
+								searchField.setMaximumSize(new Dimension(Short.MAX_VALUE, 20));
+								panel.add(searchField);
+								searchField.setColumns(10);
+
+								tglbtnHighlight = new JToggleButton("強");
+								tglbtnHighlight.addActionListener(this);
+								tglbtnHighlight.setActionCommand("highlight");
+								tglbtnHighlight.setMargin(new Insets(2, 2, 2, 2));
+								tglbtnHighlight.setMaximumSize(new Dimension(41, 20));
+								panel.add(tglbtnHighlight);
+
+								tglbtnPickup = new JToggleButton("限");
+								tglbtnPickup.addActionListener(this);
+								tglbtnPickup.setActionCommand("pickup");
+								tglbtnPickup.setMargin(new Insets(2, 2, 2, 2));
+								tglbtnPickup.setMaximumSize(new Dimension(41, 20));
+								panel.add(tglbtnPickup);
+
+								Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+								horizontalStrut_1.setMaximumSize(new Dimension(10, 1));
+								panel.add(horizontalStrut_1);
 
 								autoScrollCheckBox = new JCheckBox("自動スクロール");
 								panel.add(autoScrollCheckBox);
@@ -124,6 +155,8 @@ public class ChatMirumiruGui implements ActionListener {
 				textField.setColumns(10);
 
 						JButton button = new JButton("送信");
+						button.setMargin(new Insets(2, 2, 2, 2));
+						button.setMaximumSize(new Dimension(57, 20));
 						panel_2.add(button);
 						button.addActionListener(this);
 						button.setActionCommand("send");
@@ -134,7 +167,12 @@ public class ChatMirumiruGui implements ActionListener {
 		JMenu menu = new JMenu("メニュー");
 		menuBar.add(menu);
 
+		JMenuItem menuItem = new JMenuItem("検索");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+		menu.add(menuItem);
+
 		JMenuItem saveMenuItem = new JMenuItem("保存");
+		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menu.add(saveMenuItem);
 
 		JMenuItem exitMenuItem = new JMenuItem("閉じる");
@@ -159,10 +197,8 @@ public class ChatMirumiruGui implements ActionListener {
 			if(dateCheckBox.isSelected())
 				date = "§9" + getDateText() + "§r  ";
 			if(userCheckBox.isSelected() && isUserMessage(text))
-				//doc.insertString(doc.getLength(), date+text+"\n", attr);
 				insertFormatedString(doc, date+text+"\n");
 			else if(systemCheckBox.isSelected() && isSystemMessage(text))
-				//doc.insertString(doc.getLength(), date+text+"\n", attr);
 				insertFormatedString(doc, date+text+"\n");
 		} catch (BadLocationException e) {
 			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
@@ -183,6 +219,10 @@ public class ChatMirumiruGui implements ActionListener {
 			ChatMirumiruCore.log.info("[ChatMirumiru/info] reView");
 			reView();
 		}
+		if(e.getActionCommand().equals("search") || e.getActionCommand().equals("highlight") || e.getActionCommand().equals("pickup")){
+			ChatMirumiruCore.log.info("[ChatMirumiru/info] reView");
+			reView();
+		}
 	}
 
 	private void reView() {
@@ -192,14 +232,18 @@ public class ChatMirumiruGui implements ActionListener {
 		try{
 			int cnt = 0;
 			for(String message : allChatLog) {
+				if(searchField.getText().length() > 0){
+					if(tglbtnHighlight.isSelected())
+						message = markMessage(message, searchField.getText());
+					if(tglbtnPickup.isSelected() && !hitChatLog(cnt, searchField.getText()))
+						continue;
+				}
 				String date = "";
 				if(dateCheckBox.isSelected())
 					date = "§9" + getDateText(allChatTime.get(cnt)) + "§r  ";
 				if(userCheckBox.isSelected() && isUserMessage(message))
-					//doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
 					insertFormatedString(doc, date+message+"\n");
 				else if(systemCheckBox.isSelected() && isSystemMessage(message))
-					//doc.insertString(doc.getLength(), date+message+"\n", new SimpleAttributeSet());
 					insertFormatedString(doc, date+message+"\n");
 				cnt++;
 			}
@@ -235,7 +279,6 @@ public class ChatMirumiruGui implements ActionListener {
 
 	public void insertFormatedString(Document doc, String text) throws BadLocationException {
 		SimpleAttributeSet attr = new SimpleAttributeSet();
-		//Pattern p = Pattern.compile("(§0|§1|§2|§3|§4|§5|§6|§7|§8|§9|§a|§b|§c|§d|§e|§f|§l|§m|§n|§o)+(.+?)§r");
 		int start = -1;
 		String rest = text;
 		while((start = rest.indexOf("§")) >= 0){
@@ -288,6 +331,12 @@ public class ChatMirumiruGui implements ActionListener {
 			case 'f':  // WHITE
 				StyleConstants.setForeground(attr, Color.WHITE);
 				break;
+			case 'g':  // HIGHLIGHT
+				StyleConstants.setBackground(attr, new Color(255, 165, 0));
+				break;
+			case 'G':  // UNHIGHLIGHT
+				StyleConstants.setBackground(attr, new Color(255, 255, 255, 0));
+				break;
 			case 'l':  // BOLD
 				StyleConstants.setBold(attr, true);
 				break;
@@ -301,11 +350,26 @@ public class ChatMirumiruGui implements ActionListener {
 				StyleConstants.setItalic(attr, true);
 				break;
 			case 'r':  // RESET
-				attr = new SimpleAttributeSet();
+				if(StyleConstants.getBackground(attr) == new Color(255, 165, 0)){
+					attr = new SimpleAttributeSet();
+					StyleConstants.setBackground(attr, new Color(255, 165, 0));
+				}else{
+					attr = new SimpleAttributeSet();
+				}
 				break;
 			}
 			rest = rest.substring(start+2);
 		}
 		doc.insertString(doc.getLength(), rest, attr);
+	}
+
+	public boolean hitChatLog(int index, String word) {
+		if(allChatLog.get(index).indexOf(word) >= 0)
+			return true;
+		return false;
+	}
+
+	public String markMessage(String target, String word) {
+		return target.replaceAll(Pattern.quote(word), Matcher.quoteReplacement("§g"+word+"§G"));
 	}
 }
