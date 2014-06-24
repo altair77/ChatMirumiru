@@ -23,7 +23,7 @@ public class ChatMirumiruEvent {
 	@SubscribeEvent
 	public void chat(ClientChatReceivedEvent event) {
 
-		ChatMirumiruCore.log.info("[ChatMirumiru] " + event.message.getFormattedText());
+		//ChatMirumiruCore.log.info(event.message.getFormattedText());  // デバッグ用
 
 		window.addList(event.message.getFormattedText());
 

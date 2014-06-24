@@ -17,17 +17,19 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "ChatMirumiru", version = "0.0.10")
+@Mod(modid = ChatMirumiruCore.modid, version = ChatMirumiruCore.version)
 public class ChatMirumiruCore {
+	public static final String modid = "ChatMirumiru";
+	public static final String version = "1.0.0";
 
-	public static final Logger log = LogManager.getLogger("ChatMirumiru");
+	public static final Logger log = LogManager.getLogger(modid);
 	@SideOnly(Side.CLIENT)
 	public static final KeyBinding openGuiKey = new KeyBinding("key.openGuiKey.name", Keyboard.KEY_I, "ChatMirumiru.inputEvent.name");
 
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		ChatMirumiruCore.log.info("[ChatMirumiru] Init");
+		ChatMirumiruCore.log.info("Init.");
 
 		/*
 		 * GUI作成

@@ -8,6 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,10 +25,12 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -36,6 +43,7 @@ import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import javax.swing.text.rtf.RTFEditorKit;
 
 import net.minecraft.client.Minecraft;
 
@@ -45,8 +53,12 @@ public class ChatMirumiruGui implements ActionListener {
 
 	private ArrayList<String> allChatLog = new ArrayList<String>();
 	private ArrayList<Long> allChatTime = new ArrayList<Long>();
-	private final String userMatchStr = "^(\\[.+\\])+(<.+>)+.+:\\x20";
+	private final String userMatchStr = "^((\\[.+\\])+(<.+>)+.+:\\x20|<.+>\\x20)";
 	private final String systemMatchStr = "";
+	private final int maxLogNum = 10000;
+	private final int reloadLogNum = 100;
+	private int reloadCnt = 0;
+	private boolean saving = false;
 
 	private JFrame frame;
 	private JTextPane textPane;
@@ -74,7 +86,7 @@ public class ChatMirumiruGui implements ActionListener {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame(ChatMirumiruCore.modid+" v"+ChatMirumiruCore.version);
 		frame.setBounds(100, 100, 500, 334);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		StyleContext sc = new StyleContext();
@@ -180,11 +192,9 @@ public class ChatMirumiruGui implements ActionListener {
 		JMenu menu = new JMenu("メニュー");
 		menuBar.add(menu);
 
-		JMenuItem menuItem = new JMenuItem("検索");
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
-		menu.add(menuItem);
-
 		JMenuItem saveMenuItem = new JMenuItem("保存");
+		saveMenuItem.addActionListener(this);
+		saveMenuItem.setActionCommand("save");
 		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menu.add(saveMenuItem);
 
@@ -203,6 +213,22 @@ public class ChatMirumiruGui implements ActionListener {
 	public void addList(String text) {
 		allChatLog.add(text);
 		allChatTime.add(new Date().getTime());
+
+		while(allChatLog.size() > maxLogNum){
+			allChatLog.remove(0);
+			allChatTime.remove(0);
+		}
+
+		if(saving)
+			return;
+
+
+		if(++reloadCnt >= reloadLogNum){
+			ChatMirumiruCore.log.info("Periodic review.");
+			reView();
+			return;
+		}
+
 		Document doc = textPane.getDocument();
 		SimpleAttributeSet attr = new SimpleAttributeSet();
 		try {
@@ -214,13 +240,13 @@ public class ChatMirumiruGui implements ActionListener {
 			}
 			String date = "";
 			if(tglbtnDate.isSelected())
-				date = "§9" + getDateText() + "§r  ";
+				date = "§9" + getDateText() + "§r ";
 			if(tglbtnUser.isSelected() && isUserMessage(text))
 				insertFormatedString(doc, date+text+"\n");
 			else if(tglbtnSystem.isSelected() && isSystemMessage(text))
 				insertFormatedString(doc, date+text+"\n");
 		} catch (BadLocationException e) {
-			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
+			ChatMirumiruCore.log.error("Failed to read the document.");
 		}
 		if(tglbtnAutoScroll.isSelected())
 			textPane.setCaretPosition(doc.getLength());
@@ -235,13 +261,68 @@ public class ChatMirumiruGui implements ActionListener {
 			setVisible(false);
 		}
 		if(e.getActionCommand().equals("userCheck") || e.getActionCommand().equals("systemCheck") || e.getActionCommand().equals("dateCheck")){
-			ChatMirumiruCore.log.info("[ChatMirumiru/info] reView");
 			reView();
 		}
 		if(e.getActionCommand().equals("search") || e.getActionCommand().equals("highlight") || e.getActionCommand().equals("pickup")){
-			ChatMirumiruCore.log.info("[ChatMirumiru/info] reView");
 			reView();
 		}
+		if(e.getActionCommand().equals("save")){
+			saveFile();
+			reView();
+		}
+	}
+
+	private void saveFile() {
+		saving = true;
+
+		JFileChooser chooser = new JFileChooser(){
+			@Override
+			public void approveSelection() {
+				File f = getSelectedFile();
+				if(f.exists() && getDialogType() == SAVE_DIALOG) {
+					String m = String.format(
+							"<html>%s はすでに存在しています。<br>上書きしてもよろしいですか？",
+							f.getAbsolutePath());
+					int rv = JOptionPane.showConfirmDialog(
+							this, m, "上書きの確認", JOptionPane.YES_NO_OPTION);
+					if(rv!=JOptionPane.YES_OPTION) {
+						return;
+					}
+				}
+				super.approveSelection();
+			  }
+		};
+		ChatMirumiruRtfFilter filter = new ChatMirumiruRtfFilter();
+		chooser.setFileFilter(filter);
+		chooser.setSelectedFile(new File(getFileNameText()));
+
+		if(chooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION){
+			saving = false;
+			return;
+		}
+
+		File fChoosen = chooser.getSelectedFile();
+		try {
+			OutputStream out;
+			if(fChoosen.toString().substring(fChoosen.toString().length()-4).equals(".rtf"))
+				out = new FileOutputStream(fChoosen);
+			else
+				out = new FileOutputStream(fChoosen+".rtf");
+			RTFEditorKit rtfEditor =  new RTFEditorKit();
+			rtfEditor.write(out, textPane.getDocument(), 0, textPane.getDocument().getLength());
+			out.close();
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(frame, "ファイル名が正しくないため、\nファイルの保存に失敗しました。", "エラー", JOptionPane.ERROR_MESSAGE);
+			ChatMirumiruCore.log.error("Failed to save the file, because of invalid file name.");
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(frame, "ファイルの保存に失敗しました。", "エラー", JOptionPane.ERROR_MESSAGE);
+			ChatMirumiruCore.log.error("Failed to save the file, for IO error.");
+		} catch (BadLocationException e) {
+			JOptionPane.showMessageDialog(frame, "ファイルの保存に失敗しました。", "エラー", JOptionPane.ERROR_MESSAGE);
+			ChatMirumiruCore.log.error("Failed to save the file, for RTF error.");
+		}
+
+		saving = false;
 	}
 
 	private void reView() {
@@ -260,16 +341,16 @@ public class ChatMirumiruGui implements ActionListener {
 				}
 				String date = "";
 				if(tglbtnDate.isSelected())
-					date = "§9" + getDateText(allChatTime.get(cnt)) + "§r  ";
+					date = "§9" + getDateText(allChatTime.get(cnt)) + "§r ";
 				if(tglbtnUser.isSelected() && isUserMessage(message))
 					insertFormatedString(doc, date+message+"\n");
 				else if(tglbtnSystem.isSelected() && isSystemMessage(message))
 					insertFormatedString(doc, date+message+"\n");
 			}
 		}catch(BadLocationException e){
-			ChatMirumiruCore.log.error("[ChatMirumiru/error] Failed to read the document.");
+			ChatMirumiruCore.log.error("Failed to read the document.");
 		}
-
+		reloadCnt = 0;
 	}
 
 	private boolean isUserMessage(String text) {
@@ -285,16 +366,47 @@ public class ChatMirumiruGui implements ActionListener {
 	}
 
 	public String getDateText() {
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPANESE);
-		cal.setTime(new Date());
-		return cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.DATE)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+		Date date = new Date();
+		return getDateText(date.getTime());
 	}
 
 	public String getDateText(long time) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPANESE);
 		cal.setTimeInMillis(time);
-		return cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.DATE)+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+		String rtn = "";
+		rtn += String.valueOf(cal.get(Calendar.YEAR)%100)+"/";
+		if(cal.get(Calendar.MONTH)+1 < 10)
+			rtn += "0";
+		rtn += String.valueOf(cal.get(Calendar.MONTH)+1)+"/";
+		if(cal.get(Calendar.DATE) < 10)
+			rtn += "0";
+		rtn += String.valueOf(cal.get(Calendar.DATE))+" ";
+		if(cal.get(Calendar.HOUR_OF_DAY) < 10)
+			rtn += "0";
+		rtn += String.valueOf(cal.get(Calendar.HOUR_OF_DAY))+":";
+		if(cal.get(Calendar.MINUTE) < 10)
+			rtn += "0";
+		rtn += String.valueOf(cal.get(Calendar.MINUTE))+":";
+		if(cal.get(Calendar.SECOND) < 10)
+			rtn += "0";
+		rtn += String.valueOf(cal.get(Calendar.SECOND));
+		return rtn;
 	}
+
+	public String getFileNameText() {
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"), Locale.JAPANESE);
+		cal.setTime(new Date());
+		String rtn = "";
+		rtn += String.valueOf(cal.get(Calendar.YEAR)%100);
+		if(cal.get(Calendar.MONTH)+1 < 10)
+			rtn += "0";
+		rtn += String.valueOf(cal.get(Calendar.MONTH)+1);
+		if(cal.get(Calendar.DATE) < 10)
+			rtn += "0";
+		rtn += String.valueOf(cal.get(Calendar.DATE));
+		return rtn+"_chatlog.rtf";
+	}
+
 
 	public void insertFormatedString(Document doc, String text) throws BadLocationException {
 		SimpleAttributeSet attr = new SimpleAttributeSet();
