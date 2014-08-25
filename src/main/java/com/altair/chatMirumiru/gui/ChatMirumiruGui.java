@@ -53,7 +53,7 @@ public class ChatMirumiruGui implements ActionListener {
 
 	private ArrayList<String> allChatLog = new ArrayList<String>();
 	private ArrayList<Long> allChatTime = new ArrayList<Long>();
-	private final String userMatchStr = "^((\\[.+\\])+(<.+>)+.+:\\x20|<.+>\\x20)";
+	private final String userMatchStr = "^((\\[.+\\])+.+:\\x20|<.+>\\x20)";
 	private final String systemMatchStr = "";
 	private final int maxLogNum = 10000;
 	private final int reloadLogNum = 100;
