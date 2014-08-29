@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(modid = ChatMirumiruCore.modid, version = ChatMirumiruCore.version)
 public class ChatMirumiruCore {
 	public static final String modid = "ChatMirumiru";
-	public static final String version = "1.0.2";
+	public static final String version = "1.1.0";
 
 	public static final Logger log = LogManager.getLogger(modid);
 	public static ChatMirumiruConfig config = null;
