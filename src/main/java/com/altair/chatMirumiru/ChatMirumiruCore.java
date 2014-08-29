@@ -14,18 +14,28 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid = ChatMirumiruCore.modid, version = ChatMirumiruCore.version)
 public class ChatMirumiruCore {
 	public static final String modid = "ChatMirumiru";
-	public static final String version = "1.0.2";
+	public static final String version = "1.1.0";
 
 	public static final Logger log = LogManager.getLogger(modid);
+	public static ChatMirumiruConfig config = null;
 	@SideOnly(Side.CLIENT)
 	public static final KeyBinding openGuiKey = new KeyBinding("key.openGuiKey.name", Keyboard.KEY_I, "ChatMirumiru.inputEvent.name");
 
+
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event){
+		/*
+		 * コンフィグロード
+		 */
+		config = new ChatMirumiruConfig(event);
+	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
