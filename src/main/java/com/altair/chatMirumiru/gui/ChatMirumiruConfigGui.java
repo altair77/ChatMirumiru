@@ -17,7 +17,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import com.altair.chatMirumiru.ChatMirumiruConfig;
 import com.altair.chatMirumiru.ChatMirumiruCore;
@@ -28,6 +30,8 @@ public class ChatMirumiruConfigGui implements ActionListener {
 	private JDialog dialog;
 	private JTextField userRegExpTxt;
 	private JTextField systemRegExpTxt;
+	private JSpinner saveLogMaxSpn;
+	private JSpinner reloadLogSpn;
 
 	private ChatMirumiruConfig config = ChatMirumiruCore.config;
 
@@ -38,7 +42,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 
 	public void initialize() {
 		dialog = new JDialog(frame, "設定" , true);
-		dialog.setBounds(100, 100, 500, 130);
+		dialog.setBounds(100, 100, 500, 160);
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
 
@@ -92,6 +96,48 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		systemRegExpTxt.setColumns(30);
 		panel_1.add(systemRegExpTxt);
 
+		JPanel panel_3 = new JPanel();
+		panel_3.setMaximumSize(new Dimension(32767, 20));
+		FlowLayout flowLayout_3 = (FlowLayout) panel_3.getLayout();
+		flowLayout_3.setVgap(3);
+		flowLayout_3.setAlignment(FlowLayout.LEFT);
+		dialog.getContentPane().add(panel_3);
+
+		Component horizontalStrut_4 = Box.createHorizontalStrut(5);
+		horizontalStrut_4.setMaximumSize(new Dimension(5, 1));
+		panel_3.add(horizontalStrut_4);
+
+		JLabel label_2 = new JLabel("最大保存数");
+		label_2.setMaximumSize(new Dimension(2147483647, 20));
+		panel_3.add(label_2);
+
+		Component horizontalStrut_5 = Box.createHorizontalStrut(5);
+		horizontalStrut_5.setMaximumSize(new Dimension(5, 1));
+		panel_3.add(horizontalStrut_5);
+
+		saveLogMaxSpn = new JSpinner();
+		saveLogMaxSpn.setModel(new SpinnerNumberModel(10000, 100, 2147483647, 100));
+		saveLogMaxSpn.setPreferredSize(new Dimension(100, 20));
+		panel_3.add(saveLogMaxSpn);
+
+		Component horizontalStrut_6 = Box.createHorizontalStrut(5);
+		horizontalStrut_6.setPreferredSize(new Dimension(15, 0));
+		horizontalStrut_6.setMaximumSize(new Dimension(5, 1));
+		panel_3.add(horizontalStrut_6);
+
+		JLabel label_3 = new JLabel("再表示間隔数");
+		label_3.setMaximumSize(new Dimension(2147483647, 20));
+		panel_3.add(label_3);
+
+		Component horizontalStrut_7 = Box.createHorizontalStrut(5);
+		horizontalStrut_7.setMaximumSize(new Dimension(5, 1));
+		panel_3.add(horizontalStrut_7);
+
+		reloadLogSpn = new JSpinner();
+		reloadLogSpn.setModel(new SpinnerNumberModel(100, 0, 2147483647, 10));
+		reloadLogSpn.setPreferredSize(new Dimension(100, 20));
+		panel_3.add(reloadLogSpn);
+
 		JPanel panel_2 = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel_2.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.RIGHT);
@@ -126,7 +172,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 				JOptionPane.showMessageDialog(dialog,
 						"ユーザー正規表現が正しくありません。", "エラー",
 						JOptionPane.ERROR_MESSAGE);
-				ChatMirumiruCore.log.error("Failed to setting user regular expression");
+				ChatMirumiruCore.log.error("Failed to set user regular expression");
 				return;
 			}
 			if(!systemRegExpTxt.getText().equals("")){
@@ -136,12 +182,30 @@ public class ChatMirumiruConfigGui implements ActionListener {
 					JOptionPane.showMessageDialog(dialog,
 							"システム正規表現が正しくありません。", "エラー",
 							JOptionPane.ERROR_MESSAGE);
-					ChatMirumiruCore.log.error("Failed to setting system regular expression");
+					ChatMirumiruCore.log.error("Failed to set system regular expression");
 					return;
 				}
 			}
+			int saveLogMax = (Integer) saveLogMaxSpn.getValue();
+			if(saveLogMax < 100 || saveLogMax > Integer.MAX_VALUE){
+				JOptionPane.showMessageDialog(dialog,
+						"最大保存数が正しくありません。", "エラー",
+						JOptionPane.ERROR_MESSAGE);
+				ChatMirumiruCore.log.error("Failed to set max value of save log");
+				return;
+			}
+			int reloadLogInterval = (Integer) reloadLogSpn.getValue();
+			if(reloadLogInterval < 0 || reloadLogInterval > Integer.MAX_VALUE){
+				JOptionPane.showMessageDialog(dialog,
+						"再表示間隔数が正しくありません。", "エラー",
+						JOptionPane.ERROR_MESSAGE);
+				ChatMirumiruCore.log.error("Failed to set value of reloading Log");
+				return;
+			}
 			config.setUserRegExp(userRegExpTxt.getText());
 			config.setSystemRegExp(systemRegExpTxt.getText());
+			config.setSavingLogMax(saveLogMax);
+			config.setReloadLogInterval(reloadLogInterval);
 			config.resetConfigration();
 			setVisible(false);
 		}
@@ -153,6 +217,8 @@ public class ChatMirumiruConfigGui implements ActionListener {
 	public void setVisible(boolean b) {
 		userRegExpTxt.setText(config.getUserRegExp());
 		systemRegExpTxt.setText(config.getSystemRegExp());
+		saveLogMaxSpn.setValue(config.getSavingLogMax());
+		reloadLogSpn.setValue(config.getReloadLogInterval());
 		dialog.setVisible(b);
 	}
 
