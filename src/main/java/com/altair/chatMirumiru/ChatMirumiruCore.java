@@ -24,13 +24,16 @@ public class ChatMirumiruCore {
 	public static final String version = "1.0.2";
 
 	public static final Logger log = LogManager.getLogger(modid);
-	public ChatMirumiruConfig config = null;
+	public static ChatMirumiruConfig config = null;
 	@SideOnly(Side.CLIENT)
 	public static final KeyBinding openGuiKey = new KeyBinding("key.openGuiKey.name", Keyboard.KEY_I, "ChatMirumiru.inputEvent.name");
 
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
+		/*
+		 * コンフィグロード
+		 */
 		config = new ChatMirumiruConfig(event);
 	}
 
