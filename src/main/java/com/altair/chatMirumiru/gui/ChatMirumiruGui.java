@@ -47,14 +47,13 @@ import javax.swing.text.rtf.RTFEditorKit;
 
 import net.minecraft.client.Minecraft;
 
+import com.altair.chatMirumiru.ChatMirumiruConfig;
 import com.altair.chatMirumiru.ChatMirumiruCore;
 
 public class ChatMirumiruGui implements ActionListener {
 
 	private ArrayList<String> allChatLog = new ArrayList<String>();
 	private ArrayList<Long> allChatTime = new ArrayList<Long>();
-	private final String userMatchStr = ChatMirumiruCore.config.getUserRegExp();
-	private final String systemMatchStr = ChatMirumiruCore.config.getSystemRegExp();
 	private final int maxLogNum = 10000;
 	private final int reloadLogNum = 100;
 	private int reloadCnt = 0;
@@ -74,6 +73,9 @@ public class ChatMirumiruGui implements ActionListener {
 	private JTextField searchField;
 	private JToggleButton tglbtnHighlight;
 	private JToggleButton tglbtnPickup;
+
+	private ChatMirumiruConfig config = ChatMirumiruCore.config;
+	private ChatMirumiruConfigGui configGui = null;
 
 	/**
 	 * Create the application.
@@ -201,12 +203,19 @@ public class ChatMirumiruGui implements ActionListener {
 				InputEvent.CTRL_MASK));
 		menu.add(saveMenuItem);
 
+		JMenuItem settingMenuItem = new JMenuItem("設定");
+		settingMenuItem.setActionCommand("setting");
+		settingMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, InputEvent.CTRL_MASK));
+		settingMenuItem.addActionListener(this);
+		menu.add(settingMenuItem);
+
 		JMenuItem exitMenuItem = new JMenuItem("閉じる");
 		exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,
 				0));
 		exitMenuItem.setActionCommand("exit");
 		exitMenuItem.addActionListener(this);
 		menu.add(exitMenuItem);
+
 	}
 
 	public void setVisible(boolean visible) {
@@ -279,6 +288,11 @@ public class ChatMirumiruGui implements ActionListener {
 		if (e.getActionCommand().equals("save")) {
 			saveFile();
 			reView();
+		}
+		if (e.getActionCommand().equals("setting")) {
+			if(configGui == null)
+				configGui = new ChatMirumiruConfigGui(frame);
+			configGui.setVisible(true);
 		}
 	}
 
@@ -375,14 +389,18 @@ public class ChatMirumiruGui implements ActionListener {
 
 	private boolean isUserMessage(String text) {
 		text = text.replaceAll("§.", "");
-		Pattern p = Pattern.compile(userMatchStr);
+		Pattern p = Pattern.compile(config.getUserRegExp());
 		Matcher m = p.matcher(text);
 		return m.find();
-
 	}
 
 	private boolean isSystemMessage(String text) {
-		return !isUserMessage(text);
+		if(config.getSystemRegExp().equals(""))
+			return !isUserMessage(text);
+		text = text.replaceAll("§.", "");
+		Pattern p = Pattern.compile(config.getSystemRegExp());
+		Matcher m = p.matcher(text);
+		return m.find();
 	}
 
 	public String getDateText() {
