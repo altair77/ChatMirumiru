@@ -82,6 +82,7 @@ public class ChatMirumiruGui implements ActionListener {
 	 */
 	public ChatMirumiruGui() {
 		initialize();
+		reView();
 	}
 
 	/**
@@ -291,7 +292,7 @@ public class ChatMirumiruGui implements ActionListener {
 		}
 		if (e.getActionCommand().equals("setting")) {
 			if(configGui == null)
-				configGui = new ChatMirumiruConfigGui(frame);
+				configGui = new ChatMirumiruConfigGui(this);
 			configGui.setVisible(true);
 		}
 	}
@@ -358,10 +359,12 @@ public class ChatMirumiruGui implements ActionListener {
 		saving = false;
 	}
 
-	private void reView() {
+	public void reView() {
 		StyleContext sc = new StyleContext();
 		DefaultStyledDocument doc = new DefaultStyledDocument(sc);
 		textPane.setDocument(doc);
+		textPane.setForeground(new Color(config.getColorDefault()));
+		textPane.setBackground(new Color(config.getColorBackground()));
 		try {
 			int cnt = -1;
 			for (String message : allChatLog) {
@@ -456,54 +459,54 @@ public class ChatMirumiruGui implements ActionListener {
 			doc.insertString(doc.getLength(), rest.substring(0, start), attr);
 			switch (rest.charAt(start + 1)) {
 			case '0': // BLACK
-				StyleConstants.setForeground(attr, Color.BLACK);
+				StyleConstants.setForeground(attr, new Color(config.getColorBlack()));
 			case '1': // DARK_BLUE
-				StyleConstants.setForeground(attr, new Color(0, 0, 139));
+				StyleConstants.setForeground(attr, new Color(config.getColorDrakBlue()));
 				break;
 			case '2': // DARK_GREEN
-				StyleConstants.setForeground(attr, new Color(0, 100, 0));
+				StyleConstants.setForeground(attr, new Color(config.getColorDarkGreen()));
 				break;
 			case '3': // DARK_AQUA
-				StyleConstants.setForeground(attr, new Color(0, 139, 139));
+				StyleConstants.setForeground(attr, new Color(config.getColorDarkAqua()));
 				break;
 			case '4': // DARK_RED
-				StyleConstants.setForeground(attr, new Color(139, 0, 0));
+				StyleConstants.setForeground(attr, new Color(config.getColorDarkRed()));
 				break;
 			case '5': // DARK_PURPLE
-				StyleConstants.setForeground(attr, new Color(148, 0, 211));
+				StyleConstants.setForeground(attr, new Color(config.getColorDarkPurple()));
 				break;
 			case '6': // GOLD
-				StyleConstants.setForeground(attr, new Color(255, 215, 0));
+				StyleConstants.setForeground(attr, new Color(config.getColorGold()));
 				break;
 			case '7': // GRAY
-				StyleConstants.setForeground(attr, Color.GRAY);
+				StyleConstants.setForeground(attr, new Color(config.getColorGlay()));
 				break;
 			case '8': // DARK_GRAY
-				StyleConstants.setForeground(attr, Color.DARK_GRAY);
+				StyleConstants.setForeground(attr, new Color(config.getColorDarkGlay()));
 				break;
 			case '9': // BLUE
-				StyleConstants.setForeground(attr, Color.BLUE);
+				StyleConstants.setForeground(attr, new Color(config.getColorBlue()));
 				break;
 			case 'a': // GREEN
-				StyleConstants.setForeground(attr, Color.GREEN);
+				StyleConstants.setForeground(attr, new Color(config.getColorGreen()));
 				break;
 			case 'b': // AQUA
-				StyleConstants.setForeground(attr, new Color(0, 255, 255));
+				StyleConstants.setForeground(attr, new Color(config.getColorAqua()));
 				break;
 			case 'c': // RED
-				StyleConstants.setForeground(attr, Color.RED);
+				StyleConstants.setForeground(attr, new Color(config.getColorRed()));
 				break;
 			case 'd': // LIGHT_PURPLE
-				StyleConstants.setForeground(attr, new Color(238, 130, 238));
+				StyleConstants.setForeground(attr, new Color(config.getColorLightPurple()));
 				break;
 			case 'e': // YELLOW
-				StyleConstants.setForeground(attr, Color.YELLOW);
+				StyleConstants.setForeground(attr, new Color(config.getColorYellow()));
 				break;
 			case 'f': // WHITE
-				StyleConstants.setForeground(attr, Color.WHITE);
+				StyleConstants.setForeground(attr, new Color(config.getColorWhite()));
 				break;
 			case 'g': // HIGHLIGHT
-				StyleConstants.setBackground(attr, new Color(255, 165, 0));
+				StyleConstants.setBackground(attr, new Color(config.getColorHighlight()));
 				break;
 			case 'G': // UNHIGHLIGHT
 				StyleConstants.setBackground(attr, new Color(255, 255, 255, 0));
@@ -521,12 +524,13 @@ public class ChatMirumiruGui implements ActionListener {
 				StyleConstants.setItalic(attr, true);
 				break;
 			case 'r': // RESET
-				if (StyleConstants.getBackground(attr) == new Color(255, 165, 0)) {
+				if (StyleConstants.getBackground(attr) == new Color(config.getColorHighlight())) {
 					attr = new SimpleAttributeSet();
-					StyleConstants.setBackground(attr, new Color(255, 165, 0));
+					StyleConstants.setBackground(attr, new Color(config.getColorHighlight()));
 				} else {
 					attr = new SimpleAttributeSet();
 				}
+				StyleConstants.setForeground(attr, new Color(config.getColorDefault()));
 				break;
 			}
 			rest = rest.substring(start + 2);
@@ -548,5 +552,9 @@ public class ChatMirumiruGui implements ActionListener {
 	public String markMessage(String target, String word) {
 		return target.replaceAll(Pattern.quote(word),
 				Matcher.quoteReplacement("§g" + word + "§G"));
+	}
+
+	public JFrame getFrame() {
+		return frame;
 	}
 }
