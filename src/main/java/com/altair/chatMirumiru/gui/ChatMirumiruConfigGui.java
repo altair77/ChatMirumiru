@@ -436,6 +436,8 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		Color color = colorchooser.showDialog(dialog, "色の選択", button.getBackground());
 		if(color == null)
 			return;
+		// 不透明にする
+		color = new Color(color.getRGB(),false);
 		setButtonColor(button, color);
 	}
 
