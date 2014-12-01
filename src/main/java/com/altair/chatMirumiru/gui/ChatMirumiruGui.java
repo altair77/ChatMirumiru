@@ -461,7 +461,7 @@ public class ChatMirumiruGui implements ActionListener {
 			case '0': // BLACK
 				StyleConstants.setForeground(attr, new Color(config.getColorBlack()));
 			case '1': // DARK_BLUE
-				StyleConstants.setForeground(attr, new Color(config.getColorDrakBlue()));
+				StyleConstants.setForeground(attr, new Color(config.getColorDarkBlue()));
 				break;
 			case '2': // DARK_GREEN
 				StyleConstants.setForeground(attr, new Color(config.getColorDarkGreen()));

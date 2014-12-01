@@ -448,7 +448,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		reloadLogSpn.setValue(config.getReloadLogInterval());
 		setButtonColor(defaultBtn, new Color(config.getColorDefault()));
 		setButtonColor(blackBtn, new Color(config.getColorBlack()));
-		setButtonColor(darkBlueBtn, new Color(config.getColorDrakBlue()));
+		setButtonColor(darkBlueBtn, new Color(config.getColorDarkBlue()));
 		setButtonColor(darkGreenBtn, new Color(config.getColorDarkGreen()));
 		setButtonColor(darkAquaBtn, new Color(config.getColorDarkAqua()));
 		setButtonColor(darkRedBtn, new Color(config.getColorDarkRed()));

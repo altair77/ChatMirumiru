@@ -9,53 +9,103 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ChatMirumiruConfig {
 
+	/*
+	 * 設定初期値
+	 */
+	/** ユーザチャット正規表現の初期値 */
+	public static final String USER_REG_EXP = "^((\\[.+\\])+.+:\\x20|<.+>\\x20)";
+	/** システムチャット正規表現の初期値 */
+	public static final String SYSTEM_REG_EXP = "";
+	/** 最大ログ保存数の初期値 */
+	public static final int SAVING_LOG_MAX = 10000;
+	/** ログ更新間隔の初期値 */
+	public static final int RELOAD_LOG_INTERVAL = 100;
+	/** チャット標準文字色の初期値 */
+	public static final int COLOR_DEFAULT = Color.BLACK.getRGB();
+	/** チャット黒文字色の初期値 */
+	public static final int COLOR_BLACK = Color.BLACK.getRGB();
+	/** チャット暗い青文字色の初期値 */
+	public static final int COLOR_DARKBLUE = new Color(0, 0, 139).getRGB();
+	/** チャット暗い緑文字色の初期値 */
+	public static final int COLOR_DARKGREEN = new Color(0, 100, 0).getRGB();
+	/** チャット暗いアクア文字色の初期値 */
+	public static final int COLOR_DARKAQUA = new Color(0, 139, 139).getRGB();
+	/** チャット暗い赤文字色の初期値 */
+	public static final int COLOR_DARKRED = new Color(139, 0, 0).getRGB();
+	/** チャット暗い紫文字色の初期値 */
+	public static final int COLOR_DARKPURPLE = new Color(148, 0, 211).getRGB();
+	/** チャット金文字色の初期値 */
+	public static final int COLOR_GOLD = new Color(255, 215, 0).getRGB();
+	/** チャット灰文字色の初期値 */
+	public static final int COLOR_GLAY = Color.GRAY.getRGB();
+	/** チャット暗い灰文字色の初期値 */
+	public static final int COLOR_DARKGLAY = Color.DARK_GRAY.getRGB();
+	/** チャット青文字色の初期値 */
+	public static final int COLOR_BLUE = Color.BLUE.getRGB();
+	/** チャット緑文字色の初期値 */
+	public static final int COLOR_GREEN = Color.GREEN.getRGB();
+	/** チャットアクア文字色の初期値 */
+	public static final int COLOR_AQUA = new Color(0, 255, 255).getRGB();
+	/** チャット赤文字色の初期値 */
+	public static final int COLOR_RED = Color.RED.getRGB();
+	/** チャット明るい紫文字色の初期値 */
+	public static final int COLOR_LIGHTPURPLE = new Color(238, 130, 238).getRGB();
+	/** チャット黄文字色の初期値 */
+	public static final int COLOR_YELLOW = Color.YELLOW.getRGB();
+	/** チャット白文字色の初期値 */
+	public static final int COLOR_WHITE = Color.WHITE.getRGB();
+	/** チャットハイライト色の初期値 */
+	public static final int COLOR_HIGHLIGHT = new Color(255, 165, 0).getRGB();
+	/** チャット背景色の初期値 */
+	public static final int COLOR_BACKGROUND = Color.LIGHT_GRAY.getRGB();
+
 	private FMLPreInitializationEvent event = null;
 	/** ユーザチャット正規表現 */
-	private String userRegExp = "^((\\[.+\\])+.+:\\x20|<.+>\\x20)";
+	private String userRegExp = USER_REG_EXP;
 	/** システムチャット正規表現 */
-	private String systemRegExp = "";
+	private String systemRegExp = SYSTEM_REG_EXP;
 	/** 最大ログ保存数 */
-	private int savingLogMax = 10000;
+	private int savingLogMax = SAVING_LOG_MAX;
 	/** ログ更新間隔 */
-	private int reloadLogInterval = 100;
+	private int reloadLogInterval = RELOAD_LOG_INTERVAL;
 	/** チャット標準文字色 */
-	private int colorDefault = Color.BLACK.getRGB();
+	private int colorDefault = COLOR_DEFAULT;
 	/** チャット黒文字色 */
-	private int colorBlack = Color.BLACK.getRGB();
+	private int colorBlack = COLOR_BLACK;
 	/** チャット暗い青文字色 */
-	private int colorDrakBlue = new Color(0, 0, 139).getRGB();
+	private int colorDarkBlue = COLOR_DARKBLUE;
 	/** チャット暗い緑文字色 */
-	private int colorDarkGreen = new Color(0, 100, 0).getRGB();
+	private int colorDarkGreen = COLOR_DARKGREEN;
 	/** チャット暗いアクア文字色 */
-	private int colorDarkAqua = new Color(0, 139, 139).getRGB();
+	private int colorDarkAqua = COLOR_DARKAQUA;
 	/** チャット暗い赤文字色 */
-	private int colorDarkRed = new Color(139, 0, 0).getRGB();
+	private int colorDarkRed = COLOR_DARKRED;
 	/** チャット暗い紫文字色 */
-	private int colorDarkPurple = new Color(148, 0, 211).getRGB();
+	private int colorDarkPurple = COLOR_DARKPURPLE;
 	/** チャット金文字色 */
-	private int colorGold = new Color(255, 215, 0).getRGB();
+	private int colorGold = COLOR_GOLD;
 	/** チャット灰文字色 */
-	private int colorGlay = Color.GRAY.getRGB();
+	private int colorGlay = COLOR_GLAY;
 	/** チャット暗い灰文字色 */
-	private int colorDarkGlay = Color.DARK_GRAY.getRGB();
+	private int colorDarkGlay = COLOR_DARKGLAY;
 	/** チャット青文字色 */
-	private int colorBlue = Color.BLUE.getRGB();
+	private int colorBlue = COLOR_BLUE;
 	/** チャット緑文字色 */
-	private int colorGreen = Color.GREEN.getRGB();
+	private int colorGreen = COLOR_GREEN;
 	/** チャットアクア文字色 */
-	private int colorAqua = new Color(0, 255, 255).getRGB();
+	private int colorAqua = COLOR_AQUA;
 	/** チャット赤文字色 */
-	private int colorRed = Color.RED.getRGB();
+	private int colorRed = COLOR_RED;
 	/** チャット明るい紫文字色 */
-	private int colorLightPurple = new Color(238, 130, 238).getRGB();
+	private int colorLightPurple = COLOR_LIGHTPURPLE;
 	/** チャット黄文字色 */
-	private int colorYellow = Color.YELLOW.getRGB();
+	private int colorYellow = COLOR_YELLOW;
 	/** チャット白文字色 */
-	private int colorWhite = Color.WHITE.getRGB();
+	private int colorWhite = COLOR_WHITE;
 	/** チャットハイライト色 */
-	private int colorHighlight = new Color(255, 165, 0).getRGB();
+	private int colorHighlight = COLOR_HIGHLIGHT;
 	/** チャット背景色 */
-	private int colorBackground = Color.LIGHT_GRAY.getRGB();
+	private int colorBackground = COLOR_BACKGROUND;
 
 	public ChatMirumiruConfig(FMLPreInitializationEvent event) {
 		this.event = event;
@@ -127,7 +177,7 @@ public class ChatMirumiruConfig {
 		}
 		colorDefault  = config.get("general", "ColorDefault", colorDefault, "This is the int value of the RGB color to view default text").getInt();
 		colorBlack  = config.get("general", "ColorBlack", colorBlack, "This is the int value of the RGB color to view \"BLACK\" text").getInt();
-		colorDrakBlue  = config.get("general", "ColorDrakBlue", colorDrakBlue, "This is the int value of the RGB color to view \"DARK_BULE\" text").getInt();
+		colorDarkBlue  = config.get("general", "ColorDrakBlue", colorDarkBlue, "This is the int value of the RGB color to view \"DARK_BULE\" text").getInt();
 		colorDarkGreen  = config.get("general", "ColorDarkGreen", colorDarkGreen, "This is the int value of the RGB color to view \"DARK_GREEN\" text").getInt();
 		colorDarkAqua  = config.get("general", "ColorDarkAqua", colorDarkAqua, "This is the int value of the RGB color to view \"DARK_AQUA\" text").getInt();
 		colorDarkRed  = config.get("general", "ColorDarkRed", colorDarkRed, "This is the int value of the RGB color to view \"DARK_RED\" text").getInt();
@@ -188,12 +238,12 @@ public class ChatMirumiruConfig {
 		this.colorBlack = colorBlack;
 	}
 
-	public int getColorDrakBlue() {
-		return colorDrakBlue;
+	public int getColorDarkBlue() {
+		return colorDarkBlue;
 	}
 
 	public void setColorDrakBlue(int colorDrakBlue) {
-		this.colorDrakBlue = colorDrakBlue;
+		this.colorDarkBlue = colorDrakBlue;
 	}
 
 	public int getColorDarkGreen() {
