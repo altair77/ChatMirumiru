@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.TitledBorder;
 
 import com.altair.chatMirumiru.ChatMirumiruConfig;
 import com.altair.chatMirumiru.ChatMirumiruCore;
@@ -54,6 +55,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 	private JButton defaultBtn;
 	private JButton highlightBtn;
 	private JButton backgroundBtn;
+	private Component horizontalStrut_8;
 
 	public ChatMirumiruConfigGui(ChatMirumiruGui gui) {
 		this.parentGui = gui;
@@ -62,7 +64,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 
 	public void initialize() {
 		dialog = new JDialog(parentGui.getFrame(), "設定" , true);
-		dialog.setBounds(100, 100, 500, 303);
+		dialog.setBounds(100, 100, 500, 270);
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
 
@@ -159,11 +161,15 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_3.add(reloadLogSpn);
 
 		JPanel panel_4 = new JPanel();
+		panel_4.setBorder(new TitledBorder(null, "\u8868\u793A\u8272", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		FlowLayout flowLayout_4 = (FlowLayout) panel_4.getLayout();
-		flowLayout_4.setAlignment(FlowLayout.LEFT);
 		dialog.getContentPane().add(panel_4);
 
 		defaultBtn = new JButton("デフォルト");
+		defaultBtn.setMinimumSize(new Dimension(80, 20));
+		defaultBtn.setMaximumSize(new Dimension(80, 20));
+		defaultBtn.setPreferredSize(new Dimension(80, 20));
+		defaultBtn.setMargin(new Insets(2, 2, 2, 2));
 		defaultBtn.setForeground(Color.WHITE);
 		defaultBtn.setBackground(Color.BLACK);
 		defaultBtn.setActionCommand("default");
@@ -171,6 +177,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(defaultBtn);
 
 		blackBtn = new JButton("Black");
+		blackBtn.setMinimumSize(new Dimension(80, 20));
+		blackBtn.setMaximumSize(new Dimension(80, 20));
+		blackBtn.setPreferredSize(new Dimension(80, 20));
+		blackBtn.setMargin(new Insets(2, 2, 2, 2));
 		blackBtn.setActionCommand("black");
 		blackBtn.addActionListener(this);
 		blackBtn.setForeground(Color.WHITE);
@@ -178,6 +188,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(blackBtn);
 
 		darkBlueBtn = new JButton("DarkBlue");
+		darkBlueBtn.setMinimumSize(new Dimension(80, 20));
+		darkBlueBtn.setMaximumSize(new Dimension(80, 20));
+		darkBlueBtn.setPreferredSize(new Dimension(80, 20));
+		darkBlueBtn.setMargin(new Insets(2, 2, 2, 2));
 		darkBlueBtn.setActionCommand("darkBlue");
 		darkBlueBtn.addActionListener(this);
 		darkBlueBtn.setForeground(Color.WHITE);
@@ -185,6 +199,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(darkBlueBtn);
 
 		darkGreenBtn = new JButton("DarkGreen");
+		darkGreenBtn.setMinimumSize(new Dimension(80, 20));
+		darkGreenBtn.setMaximumSize(new Dimension(80, 20));
+		darkGreenBtn.setPreferredSize(new Dimension(80, 20));
+		darkGreenBtn.setMargin(new Insets(2, 2, 2, 2));
 		darkGreenBtn.setActionCommand("darkGreen");
 		darkGreenBtn.addActionListener(this);
 		darkGreenBtn.setForeground(Color.WHITE);
@@ -192,6 +210,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(darkGreenBtn);
 
 		darkAquaBtn = new JButton("DarkAqua");
+		darkAquaBtn.setMinimumSize(new Dimension(80, 20));
+		darkAquaBtn.setMaximumSize(new Dimension(80, 20));
+		darkAquaBtn.setPreferredSize(new Dimension(80, 20));
+		darkAquaBtn.setMargin(new Insets(2, 2, 2, 2));
 		darkAquaBtn.setActionCommand("darkAqua");
 		darkAquaBtn.addActionListener(this);
 		darkAquaBtn.setForeground(Color.WHITE);
@@ -199,6 +221,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(darkAquaBtn);
 
 		darkRedBtn = new JButton("DarkRed");
+		darkRedBtn.setMinimumSize(new Dimension(80, 20));
+		darkRedBtn.setMaximumSize(new Dimension(80, 20));
+		darkRedBtn.setPreferredSize(new Dimension(80, 20));
+		darkRedBtn.setMargin(new Insets(2, 2, 2, 2));
 		darkRedBtn.setActionCommand("darkRed");
 		darkRedBtn.addActionListener(this);
 		darkRedBtn.setForeground(Color.WHITE);
@@ -206,6 +232,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(darkRedBtn);
 
 		darkPurpleBtn = new JButton("DarkPurple");
+		darkPurpleBtn.setMinimumSize(new Dimension(80, 20));
+		darkPurpleBtn.setMaximumSize(new Dimension(80, 20));
+		darkPurpleBtn.setPreferredSize(new Dimension(80, 20));
+		darkPurpleBtn.setMargin(new Insets(2, 2, 2, 2));
 		darkPurpleBtn.setActionCommand("darkPurple");
 		darkPurpleBtn.addActionListener(this);
 		darkPurpleBtn.setForeground(Color.WHITE);
@@ -213,6 +243,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(darkPurpleBtn);
 
 		goldBtn = new JButton("Gold");
+		goldBtn.setMinimumSize(new Dimension(80, 20));
+		goldBtn.setMaximumSize(new Dimension(80, 20));
+		goldBtn.setPreferredSize(new Dimension(80, 20));
+		goldBtn.setMargin(new Insets(2, 2, 2, 2));
 		goldBtn.setActionCommand("gold");
 		goldBtn.addActionListener(this);
 		goldBtn.setForeground(Color.WHITE);
@@ -220,6 +254,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(goldBtn);
 
 		glayBtn = new JButton("Glay");
+		glayBtn.setMinimumSize(new Dimension(80, 20));
+		glayBtn.setMaximumSize(new Dimension(80, 20));
+		glayBtn.setPreferredSize(new Dimension(80, 20));
+		glayBtn.setMargin(new Insets(2, 2, 2, 2));
 		glayBtn.setActionCommand("glay");
 		glayBtn.addActionListener(this);
 		glayBtn.setForeground(Color.WHITE);
@@ -227,6 +265,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(glayBtn);
 
 		darkGrayBtn = new JButton("DrakGray");
+		darkGrayBtn.setMinimumSize(new Dimension(80, 20));
+		darkGrayBtn.setMaximumSize(new Dimension(80, 20));
+		darkGrayBtn.setPreferredSize(new Dimension(80, 20));
+		darkGrayBtn.setMargin(new Insets(2, 2, 2, 2));
 		darkGrayBtn.setActionCommand("darkGray");
 		darkGrayBtn.addActionListener(this);
 		darkGrayBtn.setForeground(Color.WHITE);
@@ -234,6 +276,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(darkGrayBtn);
 
 		blueBtn = new JButton("Blue");
+		blueBtn.setMinimumSize(new Dimension(80, 20));
+		blueBtn.setMaximumSize(new Dimension(80, 20));
+		blueBtn.setPreferredSize(new Dimension(80, 20));
+		blueBtn.setMargin(new Insets(2, 2, 2, 2));
 		blueBtn.setActionCommand("blue");
 		blueBtn.addActionListener(this);
 		blueBtn.setForeground(Color.WHITE);
@@ -241,6 +287,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(blueBtn);
 
 		greenBtn = new JButton("Green");
+		greenBtn.setMinimumSize(new Dimension(80, 20));
+		greenBtn.setMaximumSize(new Dimension(80, 20));
+		greenBtn.setPreferredSize(new Dimension(80, 20));
+		greenBtn.setMargin(new Insets(2, 2, 2, 2));
 		greenBtn.setActionCommand("green");
 		greenBtn.addActionListener(this);
 		greenBtn.setForeground(Color.WHITE);
@@ -248,6 +298,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(greenBtn);
 
 		aquaBtn = new JButton("Aqua");
+		aquaBtn.setMinimumSize(new Dimension(80, 20));
+		aquaBtn.setMaximumSize(new Dimension(80, 20));
+		aquaBtn.setPreferredSize(new Dimension(80, 20));
+		aquaBtn.setMargin(new Insets(2, 2, 2, 2));
 		aquaBtn.setActionCommand("aqua");
 		aquaBtn.addActionListener(this);
 		aquaBtn.setForeground(Color.WHITE);
@@ -255,6 +309,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(aquaBtn);
 
 		redBtn = new JButton("Red");
+		redBtn.setMinimumSize(new Dimension(80, 20));
+		redBtn.setMaximumSize(new Dimension(80, 20));
+		redBtn.setPreferredSize(new Dimension(80, 20));
+		redBtn.setMargin(new Insets(2, 2, 2, 2));
 		redBtn.setActionCommand("red");
 		redBtn.addActionListener(this);
 		redBtn.setForeground(Color.WHITE);
@@ -262,6 +320,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(redBtn);
 
 		lightPurpleBtn = new JButton("LightPurple");
+		lightPurpleBtn.setMinimumSize(new Dimension(80, 20));
+		lightPurpleBtn.setMaximumSize(new Dimension(80, 20));
+		lightPurpleBtn.setPreferredSize(new Dimension(80, 20));
+		lightPurpleBtn.setMargin(new Insets(2, 2, 2, 2));
 		lightPurpleBtn.setActionCommand("lightPurple");
 		lightPurpleBtn.addActionListener(this);
 		lightPurpleBtn.setForeground(Color.WHITE);
@@ -269,6 +331,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(lightPurpleBtn);
 
 		yellowBtn = new JButton("Yellow");
+		yellowBtn.setMinimumSize(new Dimension(80, 20));
+		yellowBtn.setMaximumSize(new Dimension(80, 20));
+		yellowBtn.setPreferredSize(new Dimension(80, 20));
+		yellowBtn.setMargin(new Insets(2, 2, 2, 2));
 		yellowBtn.setActionCommand("yellow");
 		yellowBtn.addActionListener(this);
 		yellowBtn.setForeground(Color.BLACK);
@@ -276,6 +342,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(yellowBtn);
 
 		whiteBtn = new JButton("White");
+		whiteBtn.setMinimumSize(new Dimension(80, 20));
+		whiteBtn.setMaximumSize(new Dimension(80, 20));
+		whiteBtn.setPreferredSize(new Dimension(80, 20));
+		whiteBtn.setMargin(new Insets(2, 2, 2, 2));
 		whiteBtn.setActionCommand("white");
 		whiteBtn.addActionListener(this);
 		whiteBtn.setForeground(Color.BLACK);
@@ -283,6 +353,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(whiteBtn);
 
 		highlightBtn = new JButton("強調");
+		highlightBtn.setMinimumSize(new Dimension(80, 20));
+		highlightBtn.setMaximumSize(new Dimension(80, 20));
+		highlightBtn.setPreferredSize(new Dimension(80, 20));
+		highlightBtn.setMargin(new Insets(2, 2, 2, 2));
 		highlightBtn.setForeground(Color.WHITE);
 		highlightBtn.setBackground(new Color(255, 165, 0));
 		highlightBtn.setActionCommand("highlight");
@@ -290,11 +364,18 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		panel_4.add(highlightBtn);
 
 		backgroundBtn = new JButton("背景");
+		backgroundBtn.setMinimumSize(new Dimension(80, 20));
+		backgroundBtn.setMaximumSize(new Dimension(80, 20));
+		backgroundBtn.setPreferredSize(new Dimension(80, 20));
+		backgroundBtn.setMargin(new Insets(2, 2, 2, 2));
 		backgroundBtn.setForeground(Color.WHITE);
 		backgroundBtn.setBackground(Color.LIGHT_GRAY);
 		backgroundBtn.setActionCommand("background");
 		backgroundBtn.addActionListener(this);
 		panel_4.add(backgroundBtn);
+
+		horizontalStrut_8 = Box.createHorizontalStrut(80);
+		panel_4.add(horizontalStrut_8);
 
 		JPanel panel_2 = new JPanel();
 		panel_2.setMaximumSize(new Dimension(32767, 20));
@@ -320,6 +401,15 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		cancelBtn.addActionListener(this);
 		cancelBtn.setActionCommand("cancel");
 		panel_2.add(cancelBtn);
+
+		JButton resetBtn = new JButton("初期値に戻す");
+		resetBtn.setPreferredSize(new Dimension(100, 20));
+		resetBtn.setMinimumSize(new Dimension(100, 20));
+		resetBtn.setMaximumSize(new Dimension(100, 20));
+		resetBtn.setMargin(new Insets(2, 2, 2, 2));
+		resetBtn.addActionListener(this);
+		resetBtn.setActionCommand("reset");
+		panel_2.add(resetBtn);
 	}
 
 	@Override
@@ -428,6 +518,31 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		}
 		if(e.getActionCommand().equals("cancel")) {
 			setVisible(false);
+		}
+		if(e.getActionCommand().equals("reset")) {
+			userRegExpTxt.setText(ChatMirumiruConfig.USER_REG_EXP);
+			systemRegExpTxt.setText(ChatMirumiruConfig.SYSTEM_REG_EXP);
+			saveLogMaxSpn.setValue(ChatMirumiruConfig.SAVING_LOG_MAX);
+			reloadLogSpn.setValue(ChatMirumiruConfig.RELOAD_LOG_INTERVAL);
+			setButtonColor(defaultBtn, new Color(ChatMirumiruConfig.COLOR_DEFAULT));
+			setButtonColor(blackBtn, new Color(ChatMirumiruConfig.COLOR_BLACK));
+			setButtonColor(darkBlueBtn, new Color(ChatMirumiruConfig.COLOR_DARKBLUE));
+			setButtonColor(darkGreenBtn, new Color(ChatMirumiruConfig.COLOR_DARKGREEN));
+			setButtonColor(darkAquaBtn, new Color(ChatMirumiruConfig.COLOR_DARKAQUA));
+			setButtonColor(darkRedBtn, new Color(ChatMirumiruConfig.COLOR_DARKRED));
+			setButtonColor(darkPurpleBtn, new Color(ChatMirumiruConfig.COLOR_DARKPURPLE));
+			setButtonColor(goldBtn, new Color(ChatMirumiruConfig.COLOR_GOLD));
+			setButtonColor(glayBtn, new Color(ChatMirumiruConfig.COLOR_GLAY));
+			setButtonColor(darkGrayBtn, new Color(ChatMirumiruConfig.COLOR_DARKGLAY));
+			setButtonColor(blueBtn, new Color(ChatMirumiruConfig.COLOR_BLUE));
+			setButtonColor(greenBtn, new Color(ChatMirumiruConfig.COLOR_GREEN));
+			setButtonColor(aquaBtn, new Color(ChatMirumiruConfig.COLOR_AQUA));
+			setButtonColor(redBtn, new Color(ChatMirumiruConfig.COLOR_RED));
+			setButtonColor(lightPurpleBtn, new Color(ChatMirumiruConfig.COLOR_LIGHTPURPLE));
+			setButtonColor(yellowBtn, new Color(ChatMirumiruConfig.COLOR_YELLOW));
+			setButtonColor(whiteBtn, new Color(ChatMirumiruConfig.COLOR_WHITE));
+			setButtonColor(highlightBtn, new Color(ChatMirumiruConfig.COLOR_HIGHLIGHT));
+			setButtonColor(backgroundBtn, new Color(ChatMirumiruConfig.COLOR_BACKGROUND));
 		}
 	}
 
