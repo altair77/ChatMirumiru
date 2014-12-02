@@ -52,10 +52,10 @@ import com.altair.chatMirumiru.ChatMirumiruCore;
 
 public class ChatMirumiruGui implements ActionListener {
 
+	private ChatMirumiruConfig config = ChatMirumiruCore.config;
+
 	private ArrayList<String> allChatLog = new ArrayList<String>();
 	private ArrayList<Long> allChatTime = new ArrayList<Long>();
-	private final int maxLogNum = 10000;
-	private final int reloadLogNum = 100;
 	private int reloadCnt = 0;
 	private boolean saving = false;
 
@@ -74,7 +74,6 @@ public class ChatMirumiruGui implements ActionListener {
 	private JToggleButton tglbtnHighlight;
 	private JToggleButton tglbtnPickup;
 
-	private ChatMirumiruConfig config = ChatMirumiruCore.config;
 	private ChatMirumiruConfigGui configGui = null;
 
 	/**
@@ -228,7 +227,7 @@ public class ChatMirumiruGui implements ActionListener {
 		allChatLog.add(text);
 		allChatTime.add(new Date().getTime());
 
-		while (allChatLog.size() > maxLogNum) {
+		while (allChatLog.size() > config.getSavingLogMax()) {
 			allChatLog.remove(0);
 			allChatTime.remove(0);
 		}
@@ -236,7 +235,7 @@ public class ChatMirumiruGui implements ActionListener {
 		if (saving)
 			return;
 
-		if (++reloadCnt >= reloadLogNum) {
+		if (++reloadCnt >= config.getReloadLogInterval()) {
 			ChatMirumiruCore.log.info("Periodic review.");
 			reView();
 			return;
