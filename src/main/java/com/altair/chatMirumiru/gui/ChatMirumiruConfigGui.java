@@ -64,7 +64,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 
 	public void initialize() {
 		dialog = new JDialog(parentGui.getFrame(), "設定" , true);
-		dialog.setBounds(100, 100, 500, 270);
+		dialog.setBounds(100, 100, 500, 290);
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
 
