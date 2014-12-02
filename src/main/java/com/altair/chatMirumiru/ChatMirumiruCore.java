@@ -1,5 +1,7 @@
 package com.altair.chatMirumiru;
 
+import java.io.File;
+
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -25,6 +27,7 @@ public class ChatMirumiruCore {
 
 	public static final Logger log = LogManager.getLogger(modid);
 	public static ChatMirumiruConfig config = null;
+	public static File configDir = null;
 	@SideOnly(Side.CLIENT)
 	public static final KeyBinding openGuiKey = new KeyBinding("key.openGuiKey.name", Keyboard.KEY_I, "ChatMirumiru.inputEvent.name");
 
@@ -32,9 +35,14 @@ public class ChatMirumiruCore {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
 		/*
+		 * 諸ファイル置き場の準備
+		 */
+		configDir = new ChatMirumiruFile(event.getModConfigurationDirectory()).makeDir(modid);
+
+		/*
 		 * コンフィグロード
 		 */
-		config = new ChatMirumiruConfig(event);
+		config = new ChatMirumiruConfig(configDir);
 	}
 
 	@EventHandler

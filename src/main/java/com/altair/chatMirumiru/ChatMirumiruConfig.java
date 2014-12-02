@@ -1,6 +1,7 @@
 package com.altair.chatMirumiru;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -59,7 +60,7 @@ public class ChatMirumiruConfig {
 	/** チャット背景色の初期値 */
 	public static final int COLOR_BACKGROUND = Color.LIGHT_GRAY.getRGB();
 
-	private FMLPreInitializationEvent event = null;
+	private File configFile = null;
 	/** ユーザチャット正規表現 */
 	private String userRegExp = USER_REG_EXP;
 	/** システムチャット正規表現 */
@@ -107,9 +108,13 @@ public class ChatMirumiruConfig {
 	/** チャット背景色 */
 	private int colorBackground = COLOR_BACKGROUND;
 
-	public ChatMirumiruConfig(FMLPreInitializationEvent event) {
-		this.event = event;
+	public ChatMirumiruConfig(File configFile) {
+		this.configFile = new File(configFile, ChatMirumiruCore.modid + ".cfg");
 		initConfiguration();
+	}
+
+	public ChatMirumiruConfig(FMLPreInitializationEvent event) {
+		this(event.getModConfigurationDirectory());
 	}
 
 	/**
@@ -120,7 +125,7 @@ public class ChatMirumiruConfig {
 		/*
 		 * ChatMirumiru.cfgの自動生成
 		 */
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		Configuration config = new Configuration(configFile);
 
 		try{
 			config.load();
@@ -136,7 +141,7 @@ public class ChatMirumiruConfig {
 		/*
 		 * ChatMirumiru.cfgの自動生成
 		 */
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		Configuration config = new Configuration(configFile);
 
 		try{
 			config.load();
