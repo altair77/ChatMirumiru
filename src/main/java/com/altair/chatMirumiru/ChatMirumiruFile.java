@@ -44,15 +44,24 @@ public class ChatMirumiruFile {
 		return newDir;
 	}
 
-	public ArrayList<String> readFile(){
+	public long size(){
+		if(ioFile == null)
+			return -1;
+		return ioFile.length();
+	}
+
+	public ArrayList<String> readFile(int size){
 		if(ioFile == null)
 			return null;
 		ArrayList<String> list = new ArrayList<String>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(ioFile));
 			String line;
-			while((line = br.readLine()) != null)
+			while((line = br.readLine()) != null){
 				list.add(line);
+				if(size > 1 && size < list.size())
+					list.remove(0);
+			}
 			br.close();
 		} catch (FileNotFoundException e) {
 			ChatMirumiruCore.log.error("Not found the related file. (" + ioFile.getAbsolutePath() + ")");
@@ -62,25 +71,37 @@ public class ChatMirumiruFile {
 		return list;
 	}
 
+	public ArrayList<String> readFile(){
+		return readFile(0);
+	}
+
 	public void writeLine(String line){
 		if(pw == null)
 			return;
 		pw.println(line);
 	}
 
-	public void openWriteFile(){
+	public void openWriteFile(boolean append){
 		if(ioFile == null)
 			return;
 		try {
-			pw = new PrintWriter(new BufferedWriter(new FileWriter(ioFile)));
+			pw = new PrintWriter(new BufferedWriter(new FileWriter(ioFile, append)));
 		} catch (IOException e) {
 			ChatMirumiruCore.log.error("Failed to write the related file. (" + ioFile.getAbsolutePath() + ")");
 		}
 	}
 
+	public void openWriteFile(){
+		openWriteFile(false);
+	}
+
 	public void closeWriteFile(){
 		pw.close();
 		pw = null;
+	}
+
+	public boolean isOpen(){
+		return pw != null;
 	}
 
 	public void flushFile(){

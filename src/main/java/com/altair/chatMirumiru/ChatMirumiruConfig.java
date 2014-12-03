@@ -14,13 +14,19 @@ public class ChatMirumiruConfig {
 	 * 設定初期値
 	 */
 	/** ユーザチャット正規表現の初期値 */
-	public static final String USER_REG_EXP = "^((\\[.+\\])+.+:\\x20|<.+>\\x20)";
+	public static final String USER_REG_EXP = "^((\\[.+\\])+.+:\\x20|\\[.+\\->.+\\]\\x20|<.+>\\x20)";
 	/** システムチャット正規表現の初期値 */
 	public static final String SYSTEM_REG_EXP = "";
 	/** 最大ログ保存数の初期値 */
 	public static final int SAVING_LOG_MAX = 10000;
 	/** ログ更新間隔の初期値 */
 	public static final int RELOAD_LOG_INTERVAL = 100;
+	/** ログファイル保存機能の有効無効の初期値 */
+	public static final boolean ON_SAVE_LOG = false;
+	/** ログファイル許容最大サイズの初期値 */
+	public static final int LOG_FILE_SIZE_MAX = 100;
+	/** ログファイル保存時間間隔の初期値 */
+	public static final int SAVING_LOG_FILE_TIME = 5;
 	/** チャット標準文字色の初期値 */
 	public static final int COLOR_DEFAULT = Color.BLACK.getRGB();
 	/** チャット黒文字色の初期値 */
@@ -69,6 +75,12 @@ public class ChatMirumiruConfig {
 	private int savingLogMax = SAVING_LOG_MAX;
 	/** ログ更新間隔 */
 	private int reloadLogInterval = RELOAD_LOG_INTERVAL;
+	/** ログファイル保存機能の有効無効 */
+	private boolean onSaveLog = ON_SAVE_LOG;
+	/** ログファイル許容最大サイズ */
+	private int logFileSaveMax = LOG_FILE_SIZE_MAX;
+	/** ログファイル保存時間間隔 */
+	private int savingLogFileTime = SAVING_LOG_FILE_TIME;
 	/** チャット標準文字色 */
 	private int colorDefault = COLOR_DEFAULT;
 	/** チャット黒文字色 */
@@ -161,24 +173,35 @@ public class ChatMirumiruConfig {
 			Pattern.compile(userRegExp);
 		}catch(PatternSyntaxException e){
 			ChatMirumiruCore.log.error("Failed to compile user regular expression");
-			userRegExp = "^((\\[.+\\])+.+:\\x20|<.+>\\x20)";
+			userRegExp = USER_REG_EXP;
 		}
 		systemRegExp = config.get("general", "SystemRegularExpression", systemRegExp, "This is regular expression for system message").getString();
 		try{
 			Pattern.compile(systemRegExp);
 		}catch(PatternSyntaxException e){
 			ChatMirumiruCore.log.error("Failed to compile system regular expression");
-			systemRegExp = "";
+			systemRegExp = SYSTEM_REG_EXP;
 		}
 		savingLogMax = config.get("general", "SaveLogMax", savingLogMax, "This is max value of log to save in the Mod").getInt();
 		if(savingLogMax < 100 || savingLogMax > Integer.MAX_VALUE){
 			ChatMirumiruCore.log.error("Failed to set the max value of save log");
-			savingLogMax = 10000;
+			savingLogMax = SAVING_LOG_MAX;
 		}
-		reloadLogInterval = config.get("general", "ReloadLogInterval", reloadLogInterval, "this is interval value of log to reload").getInt();
+		reloadLogInterval = config.get("general", "ReloadLogInterval", reloadLogInterval, "This is interval value of log to reload").getInt();
 		if(reloadLogInterval < 0 || reloadLogInterval > Integer.MAX_VALUE){
 			ChatMirumiruCore.log.error("Failed to set the value of reloading interval");
-			reloadLogInterval = 100;
+			reloadLogInterval = RELOAD_LOG_INTERVAL;
+		}
+		onSaveLog = config.get("general", "EnableSaveLog", onSaveLog, "If it is true, enable to save log file").getBoolean();
+		logFileSaveMax = config.get("general", "LogFileSaveMax", LOG_FILE_SIZE_MAX, "This is max file size to save the file (KB)").getInt();
+		if(logFileSaveMax < 1 || logFileSaveMax > 1048576){
+			ChatMirumiruCore.log.error("Failed to set the value of log file size");
+			logFileSaveMax = LOG_FILE_SIZE_MAX;
+		}
+		savingLogFileTime = config.get("general", "SavingLogFileTime", savingLogFileTime, "This is interval time to save the file (sec)").getInt();
+		if(savingLogFileTime < 1 || savingLogFileTime > 86400){
+			ChatMirumiruCore.log.error("Failed to set the value of saving log file interval");
+			savingLogFileTime = SAVING_LOG_FILE_TIME;
 		}
 		colorDefault  = config.get("general", "ColorDefault", colorDefault, "This is the int value of the RGB color to view default text").getInt();
 		colorBlack  = config.get("general", "ColorBlack", colorBlack, "This is the int value of the RGB color to view \"BLACK\" text").getInt();
@@ -235,6 +258,30 @@ public class ChatMirumiruConfig {
 		this.reloadLogInterval = reloadLogInterval;
 	}
 
+	public boolean isOnSaveLog() {
+		return onSaveLog;
+	}
+
+	public void setOnSaveLog(boolean onSaveLog) {
+		this.onSaveLog = onSaveLog;
+	}
+
+	public int getLogFileSaveMax() {
+		return logFileSaveMax;
+	}
+
+	public void setLogFileSaveMax(int logFileSaveMax) {
+		this.logFileSaveMax = logFileSaveMax;
+	}
+
+	public int getSavingLogFileTime() {
+		return savingLogFileTime;
+	}
+
+	public void setSavingLogFileTime(int savingLogFileTime) {
+		this.savingLogFileTime = savingLogFileTime;
+	}
+
 	public int getColorBlack() {
 		return colorBlack;
 	}
@@ -247,7 +294,7 @@ public class ChatMirumiruConfig {
 		return colorDarkBlue;
 	}
 
-	public void setColorDrakBlue(int colorDrakBlue) {
+	public void setColorDarkBlue(int colorDrakBlue) {
 		this.colorDarkBlue = colorDrakBlue;
 	}
 

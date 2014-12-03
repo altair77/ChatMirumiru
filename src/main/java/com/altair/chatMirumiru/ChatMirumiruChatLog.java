@@ -14,22 +14,38 @@ import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-public class ChatMirumiruChatLog {
+public class ChatMirumiruChatLog implements Runnable {
 
 	private final ChatMirumiruConfig config = ChatMirumiruCore.config;
 
 	private ArrayList<String> chatText = new ArrayList<String>();
 	private ArrayList<Long> chatTime = new ArrayList<Long>();
 
+	private ChatMirumiruFile logFile = new ChatMirumiruFile(ChatMirumiruCore.configDir, "log.txt");
+
 	public ChatMirumiruChatLog() {
 
 	}
 
-	public void add(String text){
+	public ChatMirumiruChatLog(boolean logging) {
+		if(logging){
+			logImport();
+			onLogging();
+		}
+	}
+
+	public void add(String text, long date){
 		chatText.add(text);
-		chatTime.add(new Date().getTime());
+		chatTime.add(date);
 		if(size() > config.getSavingLogMax())
 			remove(0);
+		if(logFile.isOpen()){
+			logFile.writeLine(date + ":" + text);
+		}
+	}
+
+	public void add(String text){
+		add(text, new Date().getTime());
 	}
 
 	public String getMainText(int index){
@@ -92,6 +108,8 @@ public class ChatMirumiruChatLog {
 		if (user && isUserMessage(text))
 			insertFormatedString(doc, dateText + text + "\n");
 		else if (system && isSystemMessage(text))
+			insertFormatedString(doc, dateText + text + "\n");
+		else if (!isUserMessage(text) && !isSystemMessage(text))
 			insertFormatedString(doc, dateText + text + "\n");
 	}
 
@@ -224,4 +242,47 @@ public class ChatMirumiruChatLog {
 		doc.insertString(doc.getLength(), rest, attr);
 	}
 
+	public void onLogging(){
+		if(logFile.isOpen())
+			return;
+		logFile.openWriteFile(true);
+		new Thread(this).start();
+	}
+
+	public void offLogging(){
+		if(logFile.isOpen())
+			logFile.closeWriteFile();
+	}
+
+	@Override
+	public void run() {
+		while(logFile.isOpen()){
+			if(logFile.size() > config.getLogFileSaveMax() * 1024L){
+				ChatMirumiruCore.log.info("Refuresh log File.");
+				logFile.closeWriteFile();
+				logFile.openWriteFile();
+				logExport();
+			}
+			logFile.flushFile();
+			try {
+				Thread.sleep(config.getSavingLogFileTime() * 1000);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	public void logImport(){
+		ArrayList<String> list = logFile.readFile(config.getSavingLogMax());
+		for(String line : list){
+			String str[] = line.split(":", 2);
+			add(str[1], Long.parseLong(str[0]));
+		}
+	}
+
+	public void logExport(){
+		if(!logFile.isOpen())
+			logFile.openWriteFile();
+		for(int i = 0; i < size(); i++)
+			logFile.writeLine(getTime(i) + ":" + getMainText(i));
+	}
 }

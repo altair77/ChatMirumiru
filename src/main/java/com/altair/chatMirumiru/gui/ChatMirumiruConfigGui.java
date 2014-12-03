@@ -13,6 +13,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -55,7 +56,13 @@ public class ChatMirumiruConfigGui implements ActionListener {
 	private JButton defaultBtn;
 	private JButton highlightBtn;
 	private JButton backgroundBtn;
-	private Component horizontalStrut_8;
+	private JCheckBox saveLogCheck;
+	private JSpinner saveLogTimeSpn;
+	private JLabel saveLogTimeLbl;
+	private JLabel saveLogTimeUnitLbl;
+	private JSpinner logFileSizeSpn;
+	private JLabel logFileSizeLbl;
+	private JLabel logFileSizeUnitLbl;
 
 	public ChatMirumiruConfigGui(ChatMirumiruGui gui) {
 		this.parentGui = gui;
@@ -64,7 +71,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 
 	public void initialize() {
 		dialog = new JDialog(parentGui.getFrame(), "設定" , true);
-		dialog.setBounds(100, 100, 500, 290);
+		dialog.setBounds(100, 100, 500, 350);
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.getContentPane().setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
 
@@ -159,6 +166,75 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		reloadLogSpn.setModel(new SpinnerNumberModel(100, 0, 2147483647, 10));
 		reloadLogSpn.setPreferredSize(new Dimension(100, 20));
 		panel_3.add(reloadLogSpn);
+
+		JPanel panel_5 = new JPanel();
+		FlowLayout fl_panel_5 = (FlowLayout) panel_5.getLayout();
+		fl_panel_5.setVgap(3);
+		fl_panel_5.setAlignment(FlowLayout.LEFT);
+		panel_5.setMaximumSize(new Dimension(32767, 20));
+		dialog.getContentPane().add(panel_5);
+
+		Component horizontalStrut_9 = Box.createHorizontalStrut(5);
+		horizontalStrut_9.setMaximumSize(new Dimension(5, 1));
+		panel_5.add(horizontalStrut_9);
+
+		saveLogCheck = new JCheckBox("ログを記録する");
+		saveLogCheck.setActionCommand("saveLog");
+		saveLogCheck.addActionListener(this);
+		saveLogCheck.setMargin(new Insets(0, 0, 0, 0));
+		saveLogCheck.setMinimumSize(new Dimension(116, 20));
+		saveLogCheck.setMaximumSize(new Dimension(116, 20));
+		panel_5.add(saveLogCheck);
+
+		Component horizontalStrut_10 = Box.createHorizontalStrut(5);
+		horizontalStrut_10.setPreferredSize(new Dimension(15, 0));
+		horizontalStrut_10.setMaximumSize(new Dimension(5, 1));
+		panel_5.add(horizontalStrut_10);
+
+		logFileSizeLbl = new JLabel("最大ファイルサイズ");
+		logFileSizeLbl.setMaximumSize(new Dimension(2147483647, 20));
+		panel_5.add(logFileSizeLbl);
+
+		Component horizontalStrut_11 = Box.createHorizontalStrut(5);
+		horizontalStrut_11.setMaximumSize(new Dimension(5, 1));
+		panel_5.add(horizontalStrut_11);
+
+		logFileSizeSpn = new JSpinner();
+		logFileSizeSpn.setModel(new SpinnerNumberModel(100, 1, 1048576, 1));
+		logFileSizeSpn.setPreferredSize(new Dimension(80, 20));
+		panel_5.add(logFileSizeSpn);
+
+		logFileSizeUnitLbl = new JLabel("Kbyte");
+		logFileSizeUnitLbl.setMaximumSize(new Dimension(2147483647, 20));
+		panel_5.add(logFileSizeUnitLbl);
+
+		JPanel panel_6 = new JPanel();
+		FlowLayout fl_panel_6 = (FlowLayout) panel_6.getLayout();
+		fl_panel_6.setVgap(3);
+		fl_panel_6.setAlignment(FlowLayout.LEFT);
+		panel_6.setMaximumSize(new Dimension(32767, 20));
+		dialog.getContentPane().add(panel_6);
+
+		Component horizontalStrut_12 = Box.createHorizontalStrut(181);
+		horizontalStrut_12.setMaximumSize(new Dimension(5, 1));
+		panel_6.add(horizontalStrut_12);
+
+		saveLogTimeLbl = new JLabel("保存間隔時間");
+		saveLogTimeLbl.setMaximumSize(new Dimension(2147483647, 20));
+		panel_6.add(saveLogTimeLbl);
+
+		Component horizontalStrut_13 = Box.createHorizontalStrut(5);
+		horizontalStrut_13.setMaximumSize(new Dimension(5, 1));
+		panel_6.add(horizontalStrut_13);
+
+		saveLogTimeSpn = new JSpinner();
+		saveLogTimeSpn.setModel(new SpinnerNumberModel(5, 1, 86400, 1));
+		saveLogTimeSpn.setPreferredSize(new Dimension(80, 20));
+		panel_6.add(saveLogTimeSpn);
+
+		saveLogTimeUnitLbl = new JLabel("秒");
+		saveLogTimeUnitLbl.setMaximumSize(new Dimension(2147483647, 20));
+		panel_6.add(saveLogTimeUnitLbl);
 
 		JPanel panel_4 = new JPanel();
 		panel_4.setBorder(new TitledBorder(null, "\u8868\u793A\u8272", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -374,7 +450,7 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		backgroundBtn.addActionListener(this);
 		panel_4.add(backgroundBtn);
 
-		horizontalStrut_8 = Box.createHorizontalStrut(80);
+		Component horizontalStrut_8 = Box.createHorizontalStrut(80);
 		panel_4.add(horizontalStrut_8);
 
 		JPanel panel_2 = new JPanel();
@@ -414,6 +490,23 @@ public class ChatMirumiruConfigGui implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand().equals("saveLog")){
+			if(saveLogCheck.isSelected()){
+				logFileSizeSpn.setEnabled(true);
+				logFileSizeLbl.setEnabled(true);
+				logFileSizeUnitLbl.setEnabled(true);
+				saveLogTimeSpn.setEnabled(true);
+				saveLogTimeLbl.setEnabled(true);
+				saveLogTimeUnitLbl.setEnabled(true);
+			}else{
+				logFileSizeSpn.setEnabled(false);
+				logFileSizeLbl.setEnabled(false);
+				logFileSizeUnitLbl.setEnabled(false);
+				saveLogTimeSpn.setEnabled(false);
+				saveLogTimeLbl.setEnabled(false);
+				saveLogTimeUnitLbl.setEnabled(false);
+			}
+		}
 		if(e.getActionCommand().equals("default"))
 			choseColorButton(defaultBtn);
 		if(e.getActionCommand().equals("black"))
@@ -489,13 +582,32 @@ public class ChatMirumiruConfigGui implements ActionListener {
 				ChatMirumiruCore.log.error("Failed to set value of reloading Log");
 				return;
 			}
+			int logFileSize = (Integer) logFileSizeSpn.getValue();
+			if(logFileSize < 1 || logFileSize > 1048576){
+				JOptionPane.showMessageDialog(dialog,
+						"最大ファイルサイズが正しくありません。", "エラー",
+						JOptionPane.ERROR_MESSAGE);
+				ChatMirumiruCore.log.error("Failed to set the value of log file size");
+				return;
+			}
+			int saveLogTime = (Integer) saveLogTimeSpn.getValue();
+			if(saveLogTime < 1 || saveLogTime > 86400){
+				JOptionPane.showMessageDialog(dialog,
+						"保存間隔時間が正しくありません。", "エラー",
+						JOptionPane.ERROR_MESSAGE);
+				ChatMirumiruCore.log.error("Failed to set the value of saving log file interval");
+				return;
+			}
 			config.setUserRegExp(userRegExpTxt.getText());
 			config.setSystemRegExp(systemRegExpTxt.getText());
 			config.setSavingLogMax(saveLogMax);
 			config.setReloadLogInterval(reloadLogInterval);
+			config.setOnSaveLog(saveLogCheck.isSelected());
+			config.setLogFileSaveMax(logFileSize);
+			config.setSavingLogFileTime(saveLogTime);
 			config.setColorDefault(defaultBtn.getBackground().getRGB());
 			config.setColorBlack(blackBtn.getBackground().getRGB());
-			config.setColorDrakBlue(darkBlueBtn.getBackground().getRGB());
+			config.setColorDarkBlue(darkBlueBtn.getBackground().getRGB());
 			config.setColorDarkGreen(darkGreenBtn.getBackground().getRGB());
 			config.setColorDarkAqua(darkAquaBtn.getBackground().getRGB());
 			config.setColorDarkRed(darkRedBtn.getBackground().getRGB());
@@ -513,6 +625,10 @@ public class ChatMirumiruConfigGui implements ActionListener {
 			config.setColorHighlight(highlightBtn.getBackground().getRGB());
 			config.setColorBackground(backgroundBtn.getBackground().getRGB());
 			config.resetConfigration();
+			if(config.isOnSaveLog())
+				parentGui.getChatLog().onLogging();
+			else
+				parentGui.getChatLog().offLogging();
 			parentGui.reView();
 			setVisible(false);
 		}
@@ -520,29 +636,38 @@ public class ChatMirumiruConfigGui implements ActionListener {
 			setVisible(false);
 		}
 		if(e.getActionCommand().equals("reset")) {
-			userRegExpTxt.setText(ChatMirumiruConfig.USER_REG_EXP);
-			systemRegExpTxt.setText(ChatMirumiruConfig.SYSTEM_REG_EXP);
-			saveLogMaxSpn.setValue(ChatMirumiruConfig.SAVING_LOG_MAX);
-			reloadLogSpn.setValue(ChatMirumiruConfig.RELOAD_LOG_INTERVAL);
-			setButtonColor(defaultBtn, new Color(ChatMirumiruConfig.COLOR_DEFAULT));
-			setButtonColor(blackBtn, new Color(ChatMirumiruConfig.COLOR_BLACK));
-			setButtonColor(darkBlueBtn, new Color(ChatMirumiruConfig.COLOR_DARKBLUE));
-			setButtonColor(darkGreenBtn, new Color(ChatMirumiruConfig.COLOR_DARKGREEN));
-			setButtonColor(darkAquaBtn, new Color(ChatMirumiruConfig.COLOR_DARKAQUA));
-			setButtonColor(darkRedBtn, new Color(ChatMirumiruConfig.COLOR_DARKRED));
-			setButtonColor(darkPurpleBtn, new Color(ChatMirumiruConfig.COLOR_DARKPURPLE));
-			setButtonColor(goldBtn, new Color(ChatMirumiruConfig.COLOR_GOLD));
-			setButtonColor(glayBtn, new Color(ChatMirumiruConfig.COLOR_GLAY));
-			setButtonColor(darkGrayBtn, new Color(ChatMirumiruConfig.COLOR_DARKGLAY));
-			setButtonColor(blueBtn, new Color(ChatMirumiruConfig.COLOR_BLUE));
-			setButtonColor(greenBtn, new Color(ChatMirumiruConfig.COLOR_GREEN));
-			setButtonColor(aquaBtn, new Color(ChatMirumiruConfig.COLOR_AQUA));
-			setButtonColor(redBtn, new Color(ChatMirumiruConfig.COLOR_RED));
-			setButtonColor(lightPurpleBtn, new Color(ChatMirumiruConfig.COLOR_LIGHTPURPLE));
-			setButtonColor(yellowBtn, new Color(ChatMirumiruConfig.COLOR_YELLOW));
-			setButtonColor(whiteBtn, new Color(ChatMirumiruConfig.COLOR_WHITE));
-			setButtonColor(highlightBtn, new Color(ChatMirumiruConfig.COLOR_HIGHLIGHT));
-			setButtonColor(backgroundBtn, new Color(ChatMirumiruConfig.COLOR_BACKGROUND));
+			userRegExpTxt.setText(config.USER_REG_EXP);
+			systemRegExpTxt.setText(config.SYSTEM_REG_EXP);
+			saveLogMaxSpn.setValue(config.SAVING_LOG_MAX);
+			reloadLogSpn.setValue(config.RELOAD_LOG_INTERVAL);
+			saveLogCheck.setSelected(config.ON_SAVE_LOG);
+			logFileSizeSpn.setValue(config.LOG_FILE_SIZE_MAX);
+			saveLogTimeSpn.setValue(config.SAVING_LOG_FILE_TIME);
+			logFileSizeSpn.setEnabled(false);
+			logFileSizeLbl.setEnabled(false);
+			logFileSizeUnitLbl.setEnabled(false);
+			saveLogTimeSpn.setEnabled(false);
+			saveLogTimeLbl.setEnabled(false);
+			saveLogTimeUnitLbl.setEnabled(false);
+			setButtonColor(defaultBtn, new Color(config.COLOR_DEFAULT));
+			setButtonColor(blackBtn, new Color(config.COLOR_BLACK));
+			setButtonColor(darkBlueBtn, new Color(config.COLOR_DARKBLUE));
+			setButtonColor(darkGreenBtn, new Color(config.COLOR_DARKGREEN));
+			setButtonColor(darkAquaBtn, new Color(config.COLOR_DARKAQUA));
+			setButtonColor(darkRedBtn, new Color(config.COLOR_DARKRED));
+			setButtonColor(darkPurpleBtn, new Color(config.COLOR_DARKPURPLE));
+			setButtonColor(goldBtn, new Color(config.COLOR_GOLD));
+			setButtonColor(glayBtn, new Color(config.COLOR_GLAY));
+			setButtonColor(darkGrayBtn, new Color(config.COLOR_DARKGLAY));
+			setButtonColor(blueBtn, new Color(config.COLOR_BLUE));
+			setButtonColor(greenBtn, new Color(config.COLOR_GREEN));
+			setButtonColor(aquaBtn, new Color(config.COLOR_AQUA));
+			setButtonColor(redBtn, new Color(config.COLOR_RED));
+			setButtonColor(lightPurpleBtn, new Color(config.COLOR_LIGHTPURPLE));
+			setButtonColor(yellowBtn, new Color(config.COLOR_YELLOW));
+			setButtonColor(whiteBtn, new Color(config.COLOR_WHITE));
+			setButtonColor(highlightBtn, new Color(config.COLOR_HIGHLIGHT));
+			setButtonColor(backgroundBtn, new Color(config.COLOR_BACKGROUND));
 		}
 	}
 
@@ -561,6 +686,24 @@ public class ChatMirumiruConfigGui implements ActionListener {
 		systemRegExpTxt.setText(config.getSystemRegExp());
 		saveLogMaxSpn.setValue(config.getSavingLogMax());
 		reloadLogSpn.setValue(config.getReloadLogInterval());
+		saveLogCheck.setSelected(config.isOnSaveLog());
+		if(saveLogCheck.isSelected()){
+			logFileSizeSpn.setEnabled(true);
+			logFileSizeLbl.setEnabled(true);
+			logFileSizeUnitLbl.setEnabled(true);
+			saveLogTimeSpn.setEnabled(true);
+			saveLogTimeLbl.setEnabled(true);
+			saveLogTimeUnitLbl.setEnabled(true);
+		}else{
+			logFileSizeSpn.setEnabled(false);
+			logFileSizeLbl.setEnabled(false);
+			logFileSizeUnitLbl.setEnabled(false);
+			saveLogTimeSpn.setEnabled(false);
+			saveLogTimeLbl.setEnabled(false);
+			saveLogTimeUnitLbl.setEnabled(false);
+		}
+		logFileSizeSpn.setValue(config.getLogFileSaveMax());
+		saveLogTimeSpn.setValue(config.getSavingLogFileTime());
 		setButtonColor(defaultBtn, new Color(config.getColorDefault()));
 		setButtonColor(blackBtn, new Color(config.getColorBlack()));
 		setButtonColor(darkBlueBtn, new Color(config.getColorDarkBlue()));

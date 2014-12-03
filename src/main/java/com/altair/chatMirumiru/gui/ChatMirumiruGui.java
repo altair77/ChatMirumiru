@@ -50,7 +50,7 @@ public class ChatMirumiruGui implements ActionListener {
 
 	private final ChatMirumiruConfig config = ChatMirumiruCore.config;
 
-	private ChatMirumiruChatLog chatLog = new ChatMirumiruChatLog();
+	private ChatMirumiruChatLog chatLog = null;
 	private int reloadCnt = 0;
 	private boolean saving = false;
 
@@ -75,6 +75,7 @@ public class ChatMirumiruGui implements ActionListener {
 	 * Create the application.
 	 */
 	public ChatMirumiruGui() {
+		chatLog = new ChatMirumiruChatLog(config.isOnSaveLog());
 		initialize();
 		reView();
 	}
@@ -246,6 +247,10 @@ public class ChatMirumiruGui implements ActionListener {
 
 	public JFrame getFrame() {
 		return frame;
+	}
+
+	public ChatMirumiruChatLog getChatLog(){
+		return chatLog;
 	}
 
 	public void setVisible(boolean visible) {
