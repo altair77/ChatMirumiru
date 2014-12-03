@@ -18,13 +18,13 @@ public class ChatMirumiruConfig {
 	/** システムチャット正規表現の初期値 */
 	public static final String SYSTEM_REG_EXP = "";
 	/** 最大ログ保存数の初期値 */
-	public static final int SAVING_LOG_MAX = 10000;
+	public static final int SAVING_LOG_MAX = 1000;
 	/** ログ更新間隔の初期値 */
 	public static final int RELOAD_LOG_INTERVAL = 100;
 	/** ログファイル保存機能の有効無効の初期値 */
 	public static final boolean ON_SAVE_LOG = false;
 	/** ログファイル許容最大サイズの初期値 */
-	public static final int LOG_FILE_SIZE_MAX = 100;
+	public static final int LOG_FILE_SIZE_MAX = 1000;
 	/** ログファイル保存時間間隔の初期値 */
 	public static final int SAVING_LOG_FILE_TIME = 5;
 	/** チャット標準文字色の初期値 */
