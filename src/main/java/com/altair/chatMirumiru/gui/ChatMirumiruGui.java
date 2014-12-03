@@ -13,13 +13,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -40,22 +37,20 @@ import javax.swing.KeyStroke;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.rtf.RTFEditorKit;
 
 import net.minecraft.client.Minecraft;
 
+import com.altair.chatMirumiru.ChatMirumiruChatLog;
 import com.altair.chatMirumiru.ChatMirumiruConfig;
 import com.altair.chatMirumiru.ChatMirumiruCore;
 
 public class ChatMirumiruGui implements ActionListener {
 
-	private ChatMirumiruConfig config = ChatMirumiruCore.config;
+	private final ChatMirumiruConfig config = ChatMirumiruCore.config;
 
-	private ArrayList<String> allChatLog = new ArrayList<String>();
-	private ArrayList<Long> allChatTime = new ArrayList<Long>();
+	private ChatMirumiruChatLog chatLog = null;
 	private int reloadCnt = 0;
 	private boolean saving = false;
 
@@ -80,7 +75,9 @@ public class ChatMirumiruGui implements ActionListener {
 	 * Create the application.
 	 */
 	public ChatMirumiruGui() {
+		chatLog = new ChatMirumiruChatLog(config.isOnSaveLog());
 		initialize();
+		reView();
 	}
 
 	/**
@@ -217,53 +214,6 @@ public class ChatMirumiruGui implements ActionListener {
 
 	}
 
-	public void setVisible(boolean visible) {
-		frame.setVisible(visible);
-		textField.requestFocus();
-	}
-
-	public void addList(String text) {
-		allChatLog.add(text);
-		allChatTime.add(new Date().getTime());
-
-		while (allChatLog.size() > config.getSavingLogMax()) {
-			allChatLog.remove(0);
-			allChatTime.remove(0);
-		}
-
-		if (saving)
-			return;
-
-		if (++reloadCnt >= config.getReloadLogInterval()) {
-			ChatMirumiruCore.log.info("Periodic review.");
-			reView();
-			return;
-		}
-
-		Document doc = textPane.getDocument();
-		SimpleAttributeSet attr = new SimpleAttributeSet();
-		try {
-			if (searchField.getText().length() > 0) {
-				if (tglbtnPickup.isSelected()
-						&& !hitChatLog(text, searchField.getText()))
-					return;
-				if (tglbtnHighlight.isSelected())
-					text = markMessage(text, searchField.getText());
-			}
-			String date = "";
-			if (tglbtnDate.isSelected())
-				date = "§9" + getDateText() + "§r ";
-			if (tglbtnUser.isSelected() && isUserMessage(text))
-				insertFormatedString(doc, date + text + "\n");
-			else if (tglbtnSystem.isSelected() && isSystemMessage(text))
-				insertFormatedString(doc, date + text + "\n");
-		} catch (BadLocationException e) {
-			ChatMirumiruCore.log.error("Failed to read the document.");
-		}
-		if (tglbtnAutoScroll.isSelected())
-			textPane.setCaretPosition(doc.getLength());
-	}
-
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("send")
 				|| e.getActionCommand().equals("chat")) {
@@ -290,9 +240,60 @@ public class ChatMirumiruGui implements ActionListener {
 		}
 		if (e.getActionCommand().equals("setting")) {
 			if(configGui == null)
-				configGui = new ChatMirumiruConfigGui(frame);
+				configGui = new ChatMirumiruConfigGui(this);
 			configGui.setVisible(true);
 		}
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public ChatMirumiruChatLog getChatLog(){
+		return chatLog;
+	}
+
+	public void setVisible(boolean visible) {
+		frame.setVisible(visible);
+		textField.requestFocus();
+	}
+
+	public void addList(String text) {
+		chatLog.add(text);
+
+		if (saving)
+			return;
+
+		if (++reloadCnt >= config.getReloadLogInterval()) {
+			ChatMirumiruCore.log.info("Periodic review.");
+			reView();
+			return;
+		}
+
+		Document doc = textPane.getDocument();
+		try {
+			chatLog.formatDocument(doc, text, searchField.getText(),
+					tglbtnUser.isSelected(), tglbtnSystem.isSelected(), tglbtnDate.isSelected(), tglbtnPickup.isSelected(), tglbtnHighlight.isSelected());
+		} catch (BadLocationException e) {
+			ChatMirumiruCore.log.error("Failed to read the document.");
+		}
+		if (tglbtnAutoScroll.isSelected())
+			textPane.setCaretPosition(doc.getLength());
+	}
+
+	public void reView() {
+		StyleContext sc = new StyleContext();
+		DefaultStyledDocument doc = new DefaultStyledDocument(sc);
+		textPane.setDocument(doc);
+		textPane.setForeground(new Color(config.getColorDefault()));
+		textPane.setBackground(new Color(config.getColorBackground()));
+		try {
+			chatLog.formatDocument(doc, searchField.getText(),
+					tglbtnUser.isSelected(), tglbtnSystem.isSelected(), tglbtnDate.isSelected(), tglbtnPickup.isSelected(), tglbtnHighlight.isSelected());
+		} catch (BadLocationException e) {
+			ChatMirumiruCore.log.error("Failed to read the document.");
+		}
+		reloadCnt = 0;
 	}
 
 	private void saveFile() {
@@ -357,80 +358,6 @@ public class ChatMirumiruGui implements ActionListener {
 		saving = false;
 	}
 
-	private void reView() {
-		StyleContext sc = new StyleContext();
-		DefaultStyledDocument doc = new DefaultStyledDocument(sc);
-		textPane.setDocument(doc);
-		try {
-			int cnt = -1;
-			for (String message : allChatLog) {
-				cnt++;
-				if (searchField.getText().length() > 0) {
-					if (tglbtnPickup.isSelected()
-							&& !hitChatLog(cnt, searchField.getText()))
-						continue;
-					if (tglbtnHighlight.isSelected())
-						message = markMessage(message, searchField.getText());
-				}
-				String date = "";
-				if (tglbtnDate.isSelected())
-					date = "§9" + getDateText(allChatTime.get(cnt)) + "§r ";
-				if (tglbtnUser.isSelected() && isUserMessage(message))
-					insertFormatedString(doc, date + message + "\n");
-				else if (tglbtnSystem.isSelected() && isSystemMessage(message))
-					insertFormatedString(doc, date + message + "\n");
-			}
-		} catch (BadLocationException e) {
-			ChatMirumiruCore.log.error("Failed to read the document.");
-		}
-		reloadCnt = 0;
-	}
-
-	private boolean isUserMessage(String text) {
-		text = text.replaceAll("§.", "");
-		Pattern p = Pattern.compile(config.getUserRegExp());
-		Matcher m = p.matcher(text);
-		return m.find();
-	}
-
-	private boolean isSystemMessage(String text) {
-		if(config.getSystemRegExp().equals(""))
-			return !isUserMessage(text);
-		text = text.replaceAll("§.", "");
-		Pattern p = Pattern.compile(config.getSystemRegExp());
-		Matcher m = p.matcher(text);
-		return m.find();
-	}
-
-	public String getDateText() {
-		Date date = new Date();
-		return getDateText(date.getTime());
-	}
-
-	public String getDateText(long time) {
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"),
-				Locale.JAPANESE);
-		cal.setTimeInMillis(time);
-		String rtn = "";
-		rtn += String.valueOf(cal.get(Calendar.YEAR) % 100) + "/";
-		if (cal.get(Calendar.MONTH) + 1 < 10)
-			rtn += "0";
-		rtn += String.valueOf(cal.get(Calendar.MONTH) + 1) + "/";
-		if (cal.get(Calendar.DATE) < 10)
-			rtn += "0";
-		rtn += String.valueOf(cal.get(Calendar.DATE)) + " ";
-		if (cal.get(Calendar.HOUR_OF_DAY) < 10)
-			rtn += "0";
-		rtn += String.valueOf(cal.get(Calendar.HOUR_OF_DAY)) + ":";
-		if (cal.get(Calendar.MINUTE) < 10)
-			rtn += "0";
-		rtn += String.valueOf(cal.get(Calendar.MINUTE)) + ":";
-		if (cal.get(Calendar.SECOND) < 10)
-			rtn += "0";
-		rtn += String.valueOf(cal.get(Calendar.SECOND));
-		return rtn;
-	}
-
 	public String getFileNameText() {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"),
 				Locale.JAPANESE);
@@ -444,108 +371,5 @@ public class ChatMirumiruGui implements ActionListener {
 			rtn += "0";
 		rtn += String.valueOf(cal.get(Calendar.DATE));
 		return rtn + "_chatlog.rtf";
-	}
-
-	public void insertFormatedString(Document doc, String text)
-			throws BadLocationException {
-		SimpleAttributeSet attr = new SimpleAttributeSet();
-		int start = -1;
-		String rest = text;
-		while ((start = rest.indexOf("§")) >= 0) {
-			doc.insertString(doc.getLength(), rest.substring(0, start), attr);
-			switch (rest.charAt(start + 1)) {
-			case '0': // BLACK
-				StyleConstants.setForeground(attr, Color.BLACK);
-			case '1': // DARK_BLUE
-				StyleConstants.setForeground(attr, new Color(0, 0, 139));
-				break;
-			case '2': // DARK_GREEN
-				StyleConstants.setForeground(attr, new Color(0, 100, 0));
-				break;
-			case '3': // DARK_AQUA
-				StyleConstants.setForeground(attr, new Color(0, 139, 139));
-				break;
-			case '4': // DARK_RED
-				StyleConstants.setForeground(attr, new Color(139, 0, 0));
-				break;
-			case '5': // DARK_PURPLE
-				StyleConstants.setForeground(attr, new Color(148, 0, 211));
-				break;
-			case '6': // GOLD
-				StyleConstants.setForeground(attr, new Color(255, 215, 0));
-				break;
-			case '7': // GRAY
-				StyleConstants.setForeground(attr, Color.GRAY);
-				break;
-			case '8': // DARK_GRAY
-				StyleConstants.setForeground(attr, Color.DARK_GRAY);
-				break;
-			case '9': // BLUE
-				StyleConstants.setForeground(attr, Color.BLUE);
-				break;
-			case 'a': // GREEN
-				StyleConstants.setForeground(attr, Color.GREEN);
-				break;
-			case 'b': // AQUA
-				StyleConstants.setForeground(attr, new Color(0, 255, 255));
-				break;
-			case 'c': // RED
-				StyleConstants.setForeground(attr, Color.RED);
-				break;
-			case 'd': // LIGHT_PURPLE
-				StyleConstants.setForeground(attr, new Color(238, 130, 238));
-				break;
-			case 'e': // YELLOW
-				StyleConstants.setForeground(attr, Color.YELLOW);
-				break;
-			case 'f': // WHITE
-				StyleConstants.setForeground(attr, Color.WHITE);
-				break;
-			case 'g': // HIGHLIGHT
-				StyleConstants.setBackground(attr, new Color(255, 165, 0));
-				break;
-			case 'G': // UNHIGHLIGHT
-				StyleConstants.setBackground(attr, new Color(255, 255, 255, 0));
-				break;
-			case 'l': // BOLD
-				StyleConstants.setBold(attr, true);
-				break;
-			case 'm': // STRIKETHROUGH
-				StyleConstants.setStrikeThrough(attr, true);
-				break;
-			case 'n': // UNDERLINE
-				StyleConstants.setUnderline(attr, true);
-				break;
-			case 'o': // ITALIC
-				StyleConstants.setItalic(attr, true);
-				break;
-			case 'r': // RESET
-				if (StyleConstants.getBackground(attr) == new Color(255, 165, 0)) {
-					attr = new SimpleAttributeSet();
-					StyleConstants.setBackground(attr, new Color(255, 165, 0));
-				} else {
-					attr = new SimpleAttributeSet();
-				}
-				break;
-			}
-			rest = rest.substring(start + 2);
-		}
-		doc.insertString(doc.getLength(), rest, attr);
-	}
-
-	public boolean hitChatLog(int index, String word) {
-		return hitChatLog(allChatLog.get(index), word);
-	}
-
-	public boolean hitChatLog(String target, String word) {
-		target = target.replaceAll("§.", "");
-		if (target.indexOf(word) >= 0)
-			return true;
-		return false;
-	}
-
-	public String markMessage(String target, String word) {
-		return target.replaceAll(Pattern.quote(word),
-				Matcher.quoteReplacement("§g" + word + "§G"));
 	}
 }
