@@ -70,11 +70,6 @@ dependencies {
     testCompile 'junit:junit:4.11'
     testRuntime 'org.ow2.asm:asm-all:4.0'
 }
-sourceSets {
-    test {
-        java.srcDirs 'src/test'
-    }
-}
 
 checkstyle {
   reportsDir = file('./build/reports/checkstyle')
