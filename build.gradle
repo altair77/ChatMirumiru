@@ -68,7 +68,7 @@ reobf { deobfFile = new net.minecraftforge.gradle.delayed.DelayedFile(project, "
 repositories.mavenCentral()
 dependencies {
     testCompile 'junit:junit:4.11'
-    testRuntime sourceSets.main.output
+    testRuntime sourceSets.main.runtimeClasspath
 }
 
 
