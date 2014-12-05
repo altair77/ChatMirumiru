@@ -68,9 +68,9 @@ reobf { deobfFile = new net.minecraftforge.gradle.delayed.DelayedFile(project, "
 repositories.mavenCentral()
 dependencies {
     testCompile 'junit:junit:4.11'
+    testCompile sourceSets.main.compileClasspath
     testRuntime sourceSets.main.runtimeClasspath
 }
-
 
 checkstyle {
   reportsDir = file('./build/reports/checkstyle')
