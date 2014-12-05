@@ -1,0 +1,59 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+allprojects {
+    apply plugin: 'forge'
+
+    minecraft {
+        version = "1.7.10-10.13.0.1208"
+        assetDir = "eclipse/assets"
+    }
+
+    version = "1.2.0"
+
+    archivesBaseName = project.projectDir.name
+}
+
+processResources
+{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+def defaultEncoding = 'UTF-8'
+compileJava {
+    options.encoding = defaultEncoding
+}
+[compileJava, compileTestJava].each{
+    it.options.encoding = 'UTF-8'
+    it.options.compilerArgs += ['-source', '1.7', '-target', '1.7']
+}
+reobf { deobfFile = new net.minecraftforge.gradle.delayed.DelayedFile(project, "build/tmp/deobfuscateJar/deobfed.jar") }
