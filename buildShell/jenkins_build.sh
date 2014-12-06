@@ -1,4 +1,4 @@
-#!/bin/sh -xe
+#!/bin/sh
 
 gradlew test
 gradlew checkstyleMain
