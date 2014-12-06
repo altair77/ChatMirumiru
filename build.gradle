@@ -69,7 +69,7 @@ repositories.mavenCentral()
 dependencies {
     testCompile 'junit:junit:4.11'
 }
-sourceSets.test.java.srcDirs 'src/main/java'
+sourceSets.test.java.srcDirs sourceSets.main.java
 
 checkstyle {
   reportsDir = file('./build/reports/checkstyle')
