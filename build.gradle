@@ -63,7 +63,7 @@ compileJava {
     it.options.encoding = 'UTF-8'
     it.options.compilerArgs += ['-source', '1.7', '-target', '1.7']
 }
-reobf { deobfFile = new net.minecraftforge.gradle.delayed.DelayedFile(project, "build/tmp/deobfuscateJar/deobfed.jar") }
+//reobf { deobfFile = new net.minecraftforge.gradle.delayed.DelayedFile(project, "build/tmp/deobfuscateJar/deobfed.jar") }
 
 repositories.mavenCentral()
 dependencies {
