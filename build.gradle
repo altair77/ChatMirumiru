@@ -32,7 +32,7 @@ allprojects {
 
     version = "1.2.0"
 
-    archivesBaseName = "ChatMirumiru"
+    archivesBaseName = "ChatMirumiru-1.7.10"
 }
 
 processResources
