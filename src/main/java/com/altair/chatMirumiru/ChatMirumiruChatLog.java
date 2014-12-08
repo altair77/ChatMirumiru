@@ -16,19 +16,21 @@ import javax.swing.text.StyleConstants;
 
 public class ChatMirumiruChatLog implements Runnable {
 
-	private final ChatMirumiruConfig config = ChatMirumiruCore.config;
+	private ChatMirumiruConfig config;
 
 	private ArrayList<String> chatText = new ArrayList<String>();
 	private ArrayList<Long> chatTime = new ArrayList<Long>();
 
-	private ChatMirumiruFile logFile = new ChatMirumiruFile(ChatMirumiruCore.configDir, "log.txt");
+	private ChatMirumiruFile logFile;
 
 	public ChatMirumiruChatLog() {
 
 	}
 
-	public ChatMirumiruChatLog(boolean logging) {
-		if(logging){
+	public ChatMirumiruChatLog(ChatMirumiruConfig config) {
+		this.config = config;
+		this.logFile = new ChatMirumiruFile(config.getConfigDir(), "log.txt");
+		if(config.isOnSaveLog()){
 			logImport();
 			onLogging();
 		}

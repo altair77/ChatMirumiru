@@ -3,10 +3,12 @@ package com.altair.chatMirumiru;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -55,7 +57,7 @@ public class ChatMirumiruFile {
 			return null;
 		ArrayList<String> list = new ArrayList<String>();
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(ioFile));
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ioFile), "UTF-8"));
 			String line;
 			while((line = br.readLine()) != null){
 				list.add(line);
@@ -85,7 +87,7 @@ public class ChatMirumiruFile {
 		if(ioFile == null)
 			return;
 		try {
-			pw = new PrintWriter(new BufferedWriter(new FileWriter(ioFile, append)));
+			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(ioFile, append), "UTF-8")));
 		} catch (IOException e) {
 			ChatMirumiruCore.log.error("Failed to write the related file. (" + ioFile.getAbsolutePath() + ")");
 		}

@@ -66,6 +66,7 @@ public class ChatMirumiruConfig {
 	/** チャット背景色の初期値 */
 	public static final int COLOR_BACKGROUND = Color.LIGHT_GRAY.getRGB();
 
+	private File configDir = null;
 	private File configFile = null;
 	/** ユーザチャット正規表現 */
 	private String userRegExp = USER_REG_EXP;
@@ -120,8 +121,9 @@ public class ChatMirumiruConfig {
 	/** チャット背景色 */
 	private int colorBackground = COLOR_BACKGROUND;
 
-	public ChatMirumiruConfig(File configFile) {
-		this.configFile = new File(configFile, ChatMirumiruCore.modid + ".cfg");
+	public ChatMirumiruConfig(File configDir) {
+		this.configDir = configDir;
+		this.configFile = new File(configDir, ChatMirumiruCore.modid + ".cfg");
 		initConfiguration();
 	}
 
@@ -222,6 +224,10 @@ public class ChatMirumiruConfig {
 		colorWhite  = config.get("general", "ColorWhite", colorWhite, "This is the int value of the RGB color to view \"WHITE\" text").getInt();
 		colorHighlight  = config.get("general", "ColorHighlight", colorHighlight, "This is the int value of the RGB color to view highlight").getInt();
 		colorBackground  = config.get("general", "ColorBackground", colorBackground, "This is the int value of the RGB color to view background").getInt();
+	}
+
+	public File getConfigDir() {
+		return configDir;
 	}
 
 	public String getUserRegExp() {

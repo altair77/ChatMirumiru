@@ -30,7 +30,7 @@ import com.altair.chatMirumiru.ChatMirumiruCore;
 public class ChatMirumiruConfigGui implements ActionListener {
 
 	private ChatMirumiruGui parentGui;
-	private ChatMirumiruConfig config = ChatMirumiruCore.config;
+	private ChatMirumiruConfig config;
 
 	private JDialog dialog;
 	private JTextField userRegExpTxt;
@@ -64,8 +64,9 @@ public class ChatMirumiruConfigGui implements ActionListener {
 	private JLabel logFileSizeLbl;
 	private JLabel logFileSizeUnitLbl;
 
-	public ChatMirumiruConfigGui(ChatMirumiruGui gui) {
+	public ChatMirumiruConfigGui(ChatMirumiruGui gui, ChatMirumiruConfig config) {
 		this.parentGui = gui;
+		this.config = config;
 		initialize();
 	}
 

@@ -48,9 +48,9 @@ import com.altair.chatMirumiru.ChatMirumiruCore;
 
 public class ChatMirumiruGui implements ActionListener {
 
-	private final ChatMirumiruConfig config = ChatMirumiruCore.config;
+	private ChatMirumiruConfig config;
 
-	private ChatMirumiruChatLog chatLog = null;
+	private ChatMirumiruChatLog chatLog;
 	private int reloadCnt = 0;
 	private boolean saving = false;
 
@@ -74,8 +74,9 @@ public class ChatMirumiruGui implements ActionListener {
 	/**
 	 * Create the application.
 	 */
-	public ChatMirumiruGui() {
-		chatLog = new ChatMirumiruChatLog(config.isOnSaveLog());
+	public ChatMirumiruGui(ChatMirumiruConfig config) {
+		this.config = config;
+		chatLog = new ChatMirumiruChatLog(config);
 		initialize();
 		reView();
 	}
@@ -240,7 +241,7 @@ public class ChatMirumiruGui implements ActionListener {
 		}
 		if (e.getActionCommand().equals("setting")) {
 			if(configGui == null)
-				configGui = new ChatMirumiruConfigGui(this);
+				configGui = new ChatMirumiruConfigGui(this, config);
 			configGui.setVisible(true);
 		}
 	}

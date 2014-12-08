@@ -26,8 +26,8 @@ public class ChatMirumiruCore {
 	public static final String version = "1.2.0";
 
 	public static final Logger log = LogManager.getLogger(modid);
-	public static ChatMirumiruConfig config = null;
-	public static File configDir = null;
+	private ChatMirumiruConfig config = null;
+	private File configDir = null;
 	@SideOnly(Side.CLIENT)
 	public static final KeyBinding openGuiKey = new KeyBinding("key.openGuiKey.name", Keyboard.KEY_I, "ChatMirumiru.inputEvent.name");
 
@@ -52,7 +52,7 @@ public class ChatMirumiruCore {
 		/*
 		 * GUI作成
 		 */
-		ChatMirumiruGui window = new ChatMirumiruGui();
+		ChatMirumiruGui window = new ChatMirumiruGui(config);
 
 		/*
 		 * KeyBinding登録
