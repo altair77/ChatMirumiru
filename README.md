@@ -3,14 +3,14 @@ ChatMirumiru
 
 概要
 ----
-Minecraft1.7.10のチャット支援MODです。  
+Minecraft1.8のチャット支援MODです。  
 チャットログを保持し、閲覧や検索、保存が行えます。
 
 インストール
 ----
-「forge-1.7.10-10.13.0.1208」環境下で動作確認しています。  
-Minecraft Forge 1.7.10をインストールしてください。  
-ChatMirumiru-1.7.10-x.x.x.jarをダウンロードし、「mods」フォルダへ配置してください。
+「forge-1.8-11.14.1.1334」環境下で動作確認しています。  
+Minecraft Forge 1.8をインストールしてください。  
+ChatMirumiru-1.8-x.x.x.jarをダウンロードし、「mods」フォルダへ配置してください。
 
 使い方
 ----

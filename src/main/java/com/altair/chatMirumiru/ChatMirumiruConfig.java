@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class ChatMirumiruConfig {
 
