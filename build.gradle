@@ -89,6 +89,7 @@ repositories.mavenCentral()
 dependencies {
     testCompile 'junit:junit:4.11'
 }
+sourceSets.test.java.srcDirs sourceSets.main.java
 
 checkstyle {
   reportsDir = file('./build/reports/checkstyle')
@@ -110,6 +111,6 @@ findbugsTest {
 
 cobertura {
   coverageFormats = ['xml','html']
-  coverageDirs = [sourceSets.main]
+  coverageDirs = [sourceSets.main.resources.srcDirs]
   coverageReportDir = file('./build/reports/cobertura')
 }
