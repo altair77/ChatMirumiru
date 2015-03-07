@@ -109,8 +109,8 @@ findbugsTest {
   excludes = ['**/*']
 }
 
-cobertura{
+cobertura {
   coverageFormats = ['xml','html']
   coverageDirs = [sourceSets.main.resources.srcDirs]
-  coverageReportDir = file('build/reports/cobertura')
+  coverageReportDir = file('./build/reports/cobertura')
 }
