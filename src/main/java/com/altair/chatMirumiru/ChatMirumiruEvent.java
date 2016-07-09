@@ -24,7 +24,7 @@ public class ChatMirumiruEvent {
 
 		//ChatMirumiruCore.log.info(event.message.getFormattedText());  // デバッグ用
 
-		window.addList(event.message.getFormattedText());
+		window.addList(event.getMessage().getFormattedText());
 
 	}
 
